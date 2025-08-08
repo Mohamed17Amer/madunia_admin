@@ -3,7 +3,6 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:madunia_admin/features/all_users/presentation/view/pages/all_users_screen.dart';
 import 'package:madunia_admin/features/app/presentation/view/widgets/custom_bottom_nav_bar_item.dart';
-import 'package:madunia_admin/features/debit_report/presentation/view/pages/debit_screen.dart';
 import 'package:madunia_admin/features/instructions/presentation/view/pages/annimated_instructions_screen.dart';
 import 'package:madunia_admin/features/manipulate_users/presentation/view/pages/manipulate_users_screen.dart';
 part 'app_state.dart';

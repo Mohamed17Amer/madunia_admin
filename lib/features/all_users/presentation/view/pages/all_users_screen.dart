@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_app_bar.dart';
-
 import 'package:madunia_admin/features/all_users/presentation/view/widgets/all_users_sliver_list.dart';
 import 'package:madunia_admin/features/all_users/presentation/view_model/cubit/all_users_cubit.dart';
 
@@ -17,19 +16,18 @@ class AllUsersScreen extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: CustomScrollView(
-               
-                slivers: [
-                  SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 5))),
-                  SliverToBoxAdapter(child: CustomAppBar(title: "جميع الأعضاء")),
-            
-            
-              SliverToBoxAdapter(child: SizedBox(height: 20)),
-              AllUsersSliverList(),
-            
-                ],
-              ),
-            );
-          
+              slivers: [
+
+                // safe area
+                SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 5))),
+                // title
+                SliverToBoxAdapter(child: CustomAppBar(title: "جميع الأعضاء")),
+                SliverToBoxAdapter(child: SizedBox(height: 20)),
+                // all users list
+                AllUsersSliverList(),
+              ],
+            ),
+          );
         },
       ),
     );

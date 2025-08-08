@@ -12,4 +12,8 @@ class DebitReportCubit extends Cubit<DebitReportState> {
 
     emit(SendAlarmToUserSuccess());
   }
+
+  void navigateTo({required BuildContext context, required String path}) {
+    navigateToWithGoRouter(context: context, path: path);
+  }
 }
