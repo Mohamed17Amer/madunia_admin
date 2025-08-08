@@ -35,7 +35,7 @@ class DebitReportItem extends StatelessWidget {
                     context: context,
                   );
                 },
-                icon: Icons.question_mark,
+                icon: Icons.add_alert_outlined,
               ),
             ),
           ),

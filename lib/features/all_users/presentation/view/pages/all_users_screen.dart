@@ -19,7 +19,7 @@ class AllUsersScreen extends StatelessWidget {
             child: CustomScrollView(
                
                 slivers: [
-                  SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 20))),
+                  SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 5))),
                   SliverToBoxAdapter(child: CustomAppBar(title: "جميع الأعضاء")),
             
             

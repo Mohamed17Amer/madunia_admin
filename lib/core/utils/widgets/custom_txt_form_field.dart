@@ -9,12 +9,15 @@ class CustomTxtFormField extends StatelessWidget {
   final String? hintText;
   final String? Function(String?)? validator;
   final int? maxLines;
+  final TextInputType? keyboardType;
 
   const CustomTxtFormField({
     super.key,
     required this.controller,
     required this.labelText,
     required this.validator,
+
+    this.keyboardType,
 
     this.hintText,
     this.maxLines = 1,
@@ -50,6 +53,7 @@ class CustomTxtFormField extends StatelessWidget {
       controller: controller,
       validator: validator,
       maxLines: maxLines,
+      keyboardType:keyboardType ,
     );
   }
 }

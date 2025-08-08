@@ -26,11 +26,12 @@ class UsersSliverListItem extends StatelessWidget {
               child: ListTile(
                 title: const CustomTxt(
                   title: "اسم المستخدم",
+                  fontWeight: FontWeight.bold,
+
                   fontColor: AppColors.debitReportItemTitleColor,
                 ),
                 subtitle: const CustomTxt(
                   title: "01011245647",
-                  fontWeight: FontWeight.bold,
                   fontColor: AppColors.debitReportItemSubTitleColor,
                 ),
                 leading: CircleAvatar(
@@ -49,7 +50,7 @@ class UsersSliverListItem extends StatelessWidget {
                       context: context,
                     );
                   },
-                  icon: Icons.question_mark,
+                  icon: Icons.add_alert_outlined,
                 ),
               ),
             ),
