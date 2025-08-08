@@ -16,20 +16,17 @@ class AllUsersScreen extends StatelessWidget {
         builder: (context, state) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Form(
-              key: context.read<AllUsersCubit>().repairScreenKey,
-              child: CustomScrollView(
-                 
-                  slivers: [
-                    SafeArea(child: SizedBox(height: 20)),
-                    CustomAppBar(title: "جميع الأعضاء"),
-
-
-                SliverToBoxAdapter(child: SizedBox(height: 20)),
-                AllUsersSliverList(),
-
-                  ],
-                ),
+            child: CustomScrollView(
+               
+                slivers: [
+                  SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 20))),
+                  SliverToBoxAdapter(child: CustomAppBar(title: "جميع الأعضاء")),
+            
+            
+              SliverToBoxAdapter(child: SizedBox(height: 20)),
+              AllUsersSliverList(),
+            
+                ],
               ),
             );
           
