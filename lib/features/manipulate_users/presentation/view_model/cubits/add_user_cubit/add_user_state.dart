@@ -5,7 +5,13 @@ sealed class AddUserState {}
 
 final class AddUserInitial extends AddUserState {}
 
-
-
 final class ValidateTxtFormFieldSuccess extends AddUserState {}
+
 final class ValidateTxtFormFieldFailure extends AddUserState {}
+
+final class GenerateNewUserUniqueNameSuccess extends AddUserState {
+  String? uniqueName;
+  GenerateNewUserUniqueNameSuccess({this.uniqueName}) {
+    log("unique name is   $uniqueName");
+  }
+}

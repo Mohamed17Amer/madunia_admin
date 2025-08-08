@@ -6,7 +6,7 @@ import 'package:toastification/toastification.dart';
 
 // generate unique codes
 Set<String> existingCodes = {}; // Set to store existing codes
-String generateCode(int length, Set<String> existingCodes) {
+String generateCode({required int length, Set<String>? existingCodes  ,String? name}) {
   const characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   final random = Random();
@@ -17,7 +17,7 @@ String generateCode(int length, Set<String> existingCodes) {
       length,
       (_) => characters[random.nextInt(characters.length)],
     ).join();
-  } while (existingCodes.contains(code)); // ensure uniqueness
+  } while (existingCodes!.contains(code)); // ensure uniqueness
 
   existingCodes.add(code); // save for future checks
   return code;

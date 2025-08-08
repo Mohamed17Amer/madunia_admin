@@ -16,29 +16,25 @@ class AddNewUserBody extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Form(
         key: context.read<AddUserCubit>().addUserScreenKey,
-        child: Column(
-          children: [
-            // safe area
-            SafeArea(child: SizedBox(height: 5)),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SafeArea(child: SizedBox(height: 5)),
+              const CustomAppBar(title: "إضافة عضو جديد "),
+              const SizedBox(height: 20),
 
-            // title
-            CustomAppBar(title: "إضافة عضو جديد "),
-            SizedBox(height: 20),
-
-            // new user photo
-            CustomCircleAvatar(
-              r1: 60,
-              r2: 50,
-              backgroundImage: AssetImage(
-                'assets/images/shorts_place_holder.png',
+              // Avatar
+              CustomCircleAvatar(
+                r1: 60,
+                r2: 50,
+                backgroundImage: AssetImage(
+                  'assets/images/shorts_place_holder.png',
+                ),
               ),
-            ),
-            SizedBox(height: 10),
+              const SizedBox(height: 20),
 
-            // new user name
-            Expanded(
-              flex: 1,
-              child: CustomTxtFormField(
+              // Name field
+              CustomTxtFormField(
                 labelText: "اسم العضو الجديد",
                 hintText: "الرجاء إدخال اسم العضو الجديد",
                 maxLines: 1,
@@ -50,18 +46,15 @@ class AddNewUserBody extends StatelessWidget {
                 },
                 controller: context.read<AddUserCubit>().userNameController,
               ),
-            ),
+              const SizedBox(height: 20),
 
-            // new user phone
-            Expanded(
-              flex: 1,
-              child: CustomTxtFormField(
+              // Phone field
+              CustomTxtFormField(
                 controller: context.read<AddUserCubit>().userPhoneController,
                 labelText: "رقم التليفون",
                 hintText: "الرجاء إدخال رقم التليفون",
                 maxLines: 1,
                 keyboardType: TextInputType.phone,
-
                 validator: (value) {
                   return context.read<AddUserCubit>().validateTxtFormField(
                     value: value,
@@ -69,12 +62,27 @@ class AddNewUserBody extends StatelessWidget {
                   );
                 },
               ),
-            ),
+              const SizedBox(height: 20),
 
-            // add new user button
-            Expanded(
-              flex: 1,
-              child: CustomButtom(
+              // Generate unique name
+              CustomButtom(
+                onPressed: (context.read<AddUserCubit>().isUniqueNameGenerated)
+                    ? null
+                    : () {
+                        context.read<AddUserCubit>().generateNewUserUniqueName(
+                          context: context,
+                        );
+                      },
+                child: CustomTxt(
+                  title: "  إنشاء الاسم المميز للعضو",
+                  fontColor: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 30),
+              CustomTxt(title: context.read<AddUserCubit>().uniqueName),
+              const SizedBox(height: 30),
+              // Add user button
+              CustomButtom(
                 child: const CustomTxt(
                   title: "  إضافة العضو",
                   fontColor: Colors.white,
@@ -83,10 +91,10 @@ class AddNewUserBody extends StatelessWidget {
                   context.read<AddUserCubit>().addNewUser(context: context);
                 },
               ),
-            ),
 
-            Expanded(flex: 4, child: SizedBox(height: 20)),
-          ],
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
