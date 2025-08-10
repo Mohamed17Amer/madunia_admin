@@ -59,7 +59,7 @@ class AddUserCubit extends Cubit<AddUserState> {
       isUniqueNameGenerated = true;
       uniqueName = userNameController.text + uniqueCode;
 
-      ScaffoldMessenger.of(context!).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('تم إنشاء الاسم المميز للعضو الجديد')),
       );
       emit(GenerateNewUserUniqueNameSuccess(uniqueName: uniqueName));
