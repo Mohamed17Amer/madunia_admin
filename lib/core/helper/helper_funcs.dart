@@ -57,7 +57,7 @@ void showMessage(String message, BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 }
 
-void navigateToWithGoRouter({required BuildContext context, required String path, AppUser? extra}) {
+void navigateToWithGoRouter({required BuildContext context, required String path, dynamic extra, }) {
   GoRouter.of(context).push(path, extra: extra);
 }
 

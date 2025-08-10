@@ -40,7 +40,9 @@ abstract class AppRouter {
       GoRoute(
         path: AppScreens.debitScreen,
         builder: (context, state) {
-          return DebitScreen();
+          final user = state.extra as AppUser;
+
+          return DebitScreen(user: user);
         },
       ),
 
@@ -54,7 +56,8 @@ abstract class AppRouter {
       GoRoute(
         path: AppScreens.addNewDebitItemScreen,
         builder: (context, state) {
-          return AddDebitItemScreen();
+          final user = state.extra as AppUser;
+          return AddDebitItemScreen(user: user);
         },
       ),
 

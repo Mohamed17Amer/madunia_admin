@@ -15,18 +15,11 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
     // emit(CopyTotalToClipboardSuccess(total));
   }
 
-  void navigateTo({required BuildContext context, required String path}) {
-    navigateToWithGoRouter(context: context, path: path);
+  void navigateTo({required BuildContext context, required String path, required dynamic extra}) {
+    navigateToWithGoRouter(context: context, path: path, extra: extra);
   }
 
+  final userPaymentDetailsCategoriess = ["عليه", "له"];
 
-  final userPaymentDetailsCategoriess = [
-  "المديونية المُستحقة عليك",
-  "المديونية المٌستحقة لك",
-  "البلاغات",
-  
-  ];
-
-
-
+  final userOtherDrtailsCategoriess = ["البلاغات"];
 }

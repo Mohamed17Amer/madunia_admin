@@ -188,7 +188,8 @@ class FirestoreService {
   // ============ DEBIT ITEM FUNCTIONS ============
 
   /// Add debit item with transaction for consistency
-  Future<String> addDebitItem({
+ 
+Future<String> addDebitItem({
     required String userId,
     required String recordName,
     required double recordMoneyValue,
@@ -227,25 +228,21 @@ class FirestoreService {
   }
 
   /// Get debit items stream with error handling
-  Stream<List<DebitItem>> getDebitItems(String userId) {
-    try {
-      _validateUserId(userId);
+  Future<List<DebitItem>> getDebitItems(String userId) async {
+  try {
+    _validateUserId(userId);
 
-      return _debitItemsRef(userId)
-          .orderBy(_createdAtField, descending: true)
-          .snapshots()
-          .map((snapshot) => _mapSnapshotToDebitItems(snapshot))
-          .handleError((error) {
-            throw FirebaseFailure.fromException(
-              Exception('Failed to get debit items: $error'),
-            );
-          });
-    } catch (e) {
-      throw FirebaseFailure.fromException(
-        Exception('Failed to initialize debit items stream: $e'),
-      );
-    }
+    final snapshot = await _debitItemsRef(userId)
+        .orderBy(_createdAtField, descending: true)
+        .get();
+
+    return _mapSnapshotToDebitItems(snapshot);
+  } catch (e) {
+    throw FirebaseFailure.fromException(
+      Exception('Failed to get debit items: $e'),
+    );
   }
+}
 
   /// Get debit item by ID
   Future<DebitItem?> getDebitItemById(String userId, String debitItemId) async {

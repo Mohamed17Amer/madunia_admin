@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:madunia_admin/core/services/firebase_sevices.dart';
 
 part 'add_debit_item_state.dart';
 
@@ -12,6 +13,8 @@ class AddDebitItemCubit extends Cubit<AddDebitItemState> {
 
   final GlobalKey<FormState> addDebitItemScreenKey = GlobalKey<FormState>();
 
+  FirestoreService firestoreService = FirestoreService();
+
   bool checkRequestValidation() {
     if (addDebitItemScreenKey.currentState!.validate()) {
       return true;
@@ -20,8 +23,18 @@ class AddDebitItemCubit extends Cubit<AddDebitItemState> {
     }
   }
 
-  void addNewDebitItem({BuildContext? context}) {
+  void addNewDebitItem({
+    BuildContext? context,
+    required String userId,
+  }) async {
     if (checkRequestValidation()) {
+      await firestoreService.addDebitItem(
+        recordName: debitItemNameController.text,
+        recordMoneyValue: double.parse(debitItemValueController.text),
+        status: "pending",
+
+        userId: userId,
+      );
       ScaffoldMessenger.of(context!).showSnackBar(
         const SnackBar(content: Text('تمت إضافة العنصر إلى المديونية')),
       );
@@ -37,7 +50,7 @@ class AddDebitItemCubit extends Cubit<AddDebitItemState> {
 
       return errorHint!;
     }
-        emit(ValidateTxtFormFieldFailure());
+    emit(ValidateTxtFormFieldFailure());
 
     return null;
   }
