@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_icon.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
+import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/user_details/presentation/view_model/cubit/user_details_cubit.dart';
 
 class UserDetailsCardItemBody extends StatelessWidget {
-  const UserDetailsCardItemBody({super.key});
+  final AppUser? user;
+  final int? index;
+  const UserDetailsCardItemBody({super.key, this.user, this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +19,7 @@ class UserDetailsCardItemBody extends StatelessWidget {
         // debit item name
         Align(
           alignment: Alignment.topRight,
-          child: CustomTxt(title: "اسم البيان"),
+          child: CustomTxt(title: context.read<UserDetailsCubit>().userPaymentDetailsCategoriess[index!] ),
         ),
 
         // debit item value
@@ -24,8 +27,7 @@ class UserDetailsCardItemBody extends StatelessWidget {
           alignment: Alignment.topLeft,
           child: CustomTxt(
             title:
-                " 15,000"
-                " جنيه مصري ",
+                "${user?.totalDebitMoney ?? 00.00} جنيه مصري ",
             fontWeight: FontWeight.bold,
           ),
         ),

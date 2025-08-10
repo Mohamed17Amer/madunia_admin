@@ -18,4 +18,15 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
   void navigateTo({required BuildContext context, required String path}) {
     navigateToWithGoRouter(context: context, path: path);
   }
+
+
+  final userPaymentDetailsCategoriess = [
+  "المديونية المُستحقة عليك",
+  "المديونية المٌستحقة لك",
+  "البلاغات",
+  
+  ];
+
+
+
 }

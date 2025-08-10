@@ -66,22 +66,17 @@ class FirestoreService {
   }
 
   /// Get all users as a stream with better error handling
-  Stream<List<AppUser>> getAllUsers() {
-    try {
-      return _usersRef
-          .snapshots()
-          .map((snapshot) => _mapSnapshotToUsers(snapshot))
-          .handleError((error) {
-            throw FirebaseFailure.fromException(
-              Exception('Failed to get users: $error'),
-            );
-          });
-    } catch (e) {
-      throw FirebaseFailure.fromException(
-        Exception('Failed to initialize users stream: $e'),
-      );
-    }
+ Future<List<AppUser>> getAllUsers() async {
+  try {
+    final snapshot = await _usersRef.get(); // one-time fetch from Firestore
+    return _mapSnapshotToUsers(snapshot);
+  } catch (error) {
+    throw FirebaseFailure.fromException(
+      Exception('Failed to get users: $error'),
+    );
   }
+}
+
 
   /// Get user by ID with consistent error handling
   Future<AppUser?> getUserById(String userId) async {

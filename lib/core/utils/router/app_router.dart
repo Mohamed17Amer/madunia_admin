@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:madunia_admin/core/utils/router/app_screens.dart';
+import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/debit_report/presentation/view/pages/add_debit_item_screen.dart';
 import 'package:madunia_admin/features/all_users/presentation/view/pages/all_users_screen.dart';
 import 'package:madunia_admin/features/app/presentation/view/pages/starting_screen.dart';
@@ -14,8 +15,11 @@ abstract class AppRouter {
     routes: [
       GoRoute(
         path: AppScreens.userDetailsScreen,
+
         builder: (context, state) {
-          return UserDetailsScreen();
+          final user = state.extra as AppUser;
+
+          return UserDetailsScreen(user: user);
         },
       ),
 
@@ -40,8 +44,6 @@ abstract class AppRouter {
         },
       ),
 
-      
-
       GoRoute(
         path: AppScreens.animatedInstructionsScreen,
         builder: (context, state) {
@@ -49,21 +51,21 @@ abstract class AppRouter {
         },
       ),
 
-        GoRoute(
+      GoRoute(
         path: AppScreens.addNewDebitItemScreen,
         builder: (context, state) {
           return AddDebitItemScreen();
         },
       ),
-    
-          GoRoute(
+
+      GoRoute(
         path: AppScreens.manipulateUsersScreen,
         builder: (context, state) {
           return ManipulateUsersScreen();
         },
       ),
-    
-       GoRoute(
+
+      GoRoute(
         path: AppScreens.addNewUserScreen,
         builder: (context, state) {
           return AddNewUserScreen();

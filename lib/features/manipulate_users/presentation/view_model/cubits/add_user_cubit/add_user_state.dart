@@ -15,3 +15,17 @@ final class GenerateNewUserUniqueNameSuccess extends AddUserState {
     log("unique name is   $uniqueName");
   }
 }
+
+final class AddNewUserSuccess extends AddUserState {
+  final String? uniqueName;
+  AddNewUserSuccess({this.uniqueName}) {
+    log("add new user success $uniqueName ");
+  }
+}
+
+final class AddNewUserFailure extends AddUserState {
+  final String? uniqueName;
+  AddNewUserFailure({this.uniqueName}) {
+    log("add new user failure $uniqueName ");
+  }
+}

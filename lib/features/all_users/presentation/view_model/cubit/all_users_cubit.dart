@@ -1,5 +1,10 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:madunia_admin/core/helper/helper_funcs.dart';
+import 'package:madunia_admin/core/services/firebase_sevices.dart';
+import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
 
 part 'all_users_state.dart';
 
@@ -11,6 +16,8 @@ class AllUsersCubit extends Cubit<AllUsersState> {
       TextEditingController();
 
   final GlobalKey<FormState> repairScreenKey = GlobalKey<FormState>();
+
+  FirestoreService firestoreService = FirestoreService();
 
   bool checkRequestValidation() {
     if (repairScreenKey.currentState!.validate()) {
@@ -37,8 +44,25 @@ class AllUsersCubit extends Cubit<AllUsersState> {
 
       return errorHint!;
     }
-        emit(ValidateTxtFormFieldFailure());
+    emit(ValidateTxtFormFieldFailure());
 
     return null;
+  }
+
+  getAllUsers() async {
+    try {
+      final users = await firestoreService.getAllUsers();
+      emit(GetAllUsersSuccess(users: users));
+      return users;
+    } on Exception catch (e) {
+      emit(GetAllUsersFailure(errmesg: e.toString()));
+      return Stream.error(e);
+    }
+    // TODO
+  }
+
+
+   void navigateTo({required BuildContext context, required String path, AppUser? extra}) {
+    navigateToWithGoRouter(context: context, path: path, extra: extra);
   }
 }

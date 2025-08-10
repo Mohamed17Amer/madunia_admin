@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:madunia_admin/core/helper/helper_funcs.dart';
+import 'package:madunia_admin/core/services/firebase_sevices.dart';
 
 part 'add_user_state.dart';
 
@@ -11,11 +12,12 @@ class AddUserCubit extends Cubit<AddUserState> {
 
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController userPhoneController = TextEditingController();
-
   final GlobalKey<FormState> addUserScreenKey = GlobalKey<FormState>();
 
   String uniqueName = "";
   bool isUniqueNameGenerated = false;
+
+  FirestoreService firestoreService = FirestoreService();
 
   bool checkRequestValidation() {
     if (addUserScreenKey.currentState!.validate()) {
@@ -26,11 +28,25 @@ class AddUserCubit extends Cubit<AddUserState> {
   }
 
   void addNewUser({BuildContext? context}) {
-    if (checkRequestValidation()) {
+    if (checkRequestValidation() && isUniqueNameGenerated) {
+      firestoreService
+          .createUser(
+            phoneNumber: userPhoneController.text,
+            uniqueName: uniqueName,
+          )
+          .then((value) {});
+
       ScaffoldMessenger.of(
         context!,
       ).showSnackBar(const SnackBar(content: Text('تمت إضافة العضو الجديد')));
+
+      emit(AddNewUserSuccess(uniqueName: uniqueName));
+    } else {
+      ScaffoldMessenger.of(context!).showSnackBar(
+        const SnackBar(content: Text('من فضلك، قم بإنشاء الاسم المميز')),
+      );
     }
+    emit(AddNewUserFailure(uniqueName: uniqueName));
   }
 
   String? validateTxtFormField({
@@ -57,7 +73,7 @@ class AddUserCubit extends Cubit<AddUserState> {
       );
 
       isUniqueNameGenerated = true;
-      uniqueName = userNameController.text + uniqueCode;
+      uniqueName = "${userNameController.text}_$uniqueCode";
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('تم إنشاء الاسم المميز للعضو الجديد')),

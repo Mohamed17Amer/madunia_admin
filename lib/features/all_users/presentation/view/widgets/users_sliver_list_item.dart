@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/utils/colors/app_colors.dart';
 import 'package:madunia_admin/core/utils/router/app_screens.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_circle_avatar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_icon.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/features/all_users/presentation/view_model/cubit/all_users_cubit.dart';
+import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/debit_report/presentation/view_model/cubits/debit_report_cubit/debit_report_cubit.dart';
 
 class UsersSliverListItem extends StatelessWidget {
-  const UsersSliverListItem({super.key});
+  final AppUser user;
+  const UsersSliverListItem({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -20,22 +23,27 @@ class UsersSliverListItem extends StatelessWidget {
           textDirection: TextDirection.rtl,
           child: GestureDetector(
             onTap: () {
-              GoRouter.of(context).push(AppScreens.userDetailsScreen);
+              context.read<AllUsersCubit>().navigateTo(
+                context: context,
+                path: AppScreens.userDetailsScreen,
+                extra: user,
+              );
             },
             child: SizedBox(
               //height: MediaQuery.of(context).size.height*.2,
               child: ListTile(
                 // user name
-                title: const CustomTxt(
-                  title: "اسم المستخدم",
+                title: CustomTxt(
+                  title: user.uniqueName,
                   fontWeight: FontWeight.bold,
 
                   fontColor: AppColors.debitReportItemTitleColor,
                 ),
 
                 // user phone
-                subtitle: const CustomTxt(
-                  title: "01011245647",
+                subtitle: CustomTxt(
+                  title: user.phoneNumber,
+                  fontWeight: FontWeight.normal,
                   fontColor: AppColors.debitReportItemSubTitleColor,
                 ),
 

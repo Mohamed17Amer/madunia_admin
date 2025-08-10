@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
 import 'package:toastification/toastification.dart';
 
 // generate unique codes
@@ -56,8 +57,8 @@ void showMessage(String message, BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 }
 
-void navigateToWithGoRouter({required BuildContext context, required String path}) {
-  GoRouter.of(context).push(path);
+void navigateToWithGoRouter({required BuildContext context, required String path, AppUser? extra}) {
+  GoRouter.of(context).push(path, extra: extra);
 }
 
 

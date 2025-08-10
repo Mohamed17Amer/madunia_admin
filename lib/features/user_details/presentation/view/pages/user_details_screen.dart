@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_scaffold.dart';
+import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/user_details/presentation/view/widgets/user_details_cards_grid_view.dart';
 import 'package:madunia_admin/features/user_details/presentation/view/widgets/user_details_profile_section.dart';
 import 'package:madunia_admin/features/user_details/presentation/view_model/cubit/user_details_cubit.dart';
 
 class UserDetailsScreen extends StatelessWidget {
-  const UserDetailsScreen({super.key});
+  final AppUser ? user;
+  const UserDetailsScreen({super.key, this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class UserDetailsScreen extends StatelessWidget {
                   SliverToBoxAdapter(child: SizedBox(height: 20)),
           
                   // Grid view section
-                  SliverToBoxAdapter(child: UserDetailsCardsGridView()),
+                  SliverToBoxAdapter(child: UserDetailsCardsGridView(user :user)),
                 ],
               ),
             ),

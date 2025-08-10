@@ -10,21 +10,30 @@ class AllUsersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AllUsersCubit(),
+      create: (context) => AllUsersCubit()..getAllUsers(),
       child: BlocBuilder<AllUsersCubit, AllUsersState>(
         builder: (context, state) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: CustomScrollView(
               slivers: [
-
                 // safe area
                 SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 5))),
                 // title
                 SliverToBoxAdapter(child: CustomAppBar(title: "جميع الأعضاء")),
                 SliverToBoxAdapter(child: SizedBox(height: 20)),
-                // all users list
-                AllUsersSliverList(),
+
+                if (state is GetAllUsersSuccess) ...[
+                  AllUsersSliverList(users: state.users),
+                ] else if (state is GetAllUsersFailure) ...[
+                  SliverFillRemaining(
+                    child: Center(child: Text(state.errmesg)),
+                  ),
+                ] else ...[
+                  const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                ],
               ],
             ),
           );
