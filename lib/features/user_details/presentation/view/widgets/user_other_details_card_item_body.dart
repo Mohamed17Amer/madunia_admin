@@ -7,7 +7,7 @@ import 'package:madunia_admin/features/user_details/presentation/view_model/cubi
 class UserOtherDetailsCardItemBody extends StatelessWidget {
   final AppUser? user;
   final int? index;
-  UserOtherDetailsCardItemBody({super.key, this.user, this.index});
+  const UserOtherDetailsCardItemBody({super.key, this.user, this.index});
 
   @override
   Widget build(BuildContext context) {
