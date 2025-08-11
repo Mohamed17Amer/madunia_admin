@@ -4,7 +4,7 @@ import 'package:madunia_admin/core/utils/colors/app_colors.dart';
 import 'package:madunia_admin/core/utils/router/app_screens.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_icon.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
-import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
+import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/debit_report/presentation/view_model/cubits/debit_report_cubit/debit_report_cubit.dart';
 
 class AddNewDebitItemButton extends StatelessWidget {

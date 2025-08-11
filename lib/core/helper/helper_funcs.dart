@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
 import 'package:toastification/toastification.dart';
 
 // generate unique codes

@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:madunia_admin/core/utils/router/app_screens.dart';
-import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
+import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/debit_report/presentation/view/pages/add_debit_item_screen.dart';
 import 'package:madunia_admin/features/all_users/presentation/view/pages/all_users_screen.dart';
 import 'package:madunia_admin/features/app/presentation/view/pages/starting_screen.dart';

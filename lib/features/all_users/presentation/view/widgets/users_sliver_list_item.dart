@@ -6,7 +6,7 @@ import 'package:madunia_admin/core/utils/widgets/custom_circle_avatar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_icon.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/features/all_users/presentation/view_model/cubit/all_users_cubit.dart';
-import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
+import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/debit_report/presentation/view_model/cubits/debit_report_cubit/debit_report_cubit.dart';
 
 class UsersSliverListItem extends StatelessWidget {

@@ -1,8 +1,6 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:madunia_admin/core/utils/errors/firebase_failures.dart';
-import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
+import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/debit_report/data/models/debit_item_model.dart';
 
 /// Enhanced FirestoreService with improved error handling, performance, and maintainability
@@ -21,7 +19,29 @@ class FirestoreService {
   static const String _totalMoneyOwedField = 'totalMoneyOwed';
 
   // Owed status constants
-  static const Set<String> _owedStatuses = {'pending', 'unpaid', 'overdue'};
+  static const Set<String> _owedStatuses = {'pending', 'unpaid', 'overdue'}
+  /*
+  IMPORTANT: You need to add this copyWith method to your AppUser model class:
+  
+  AppUser copyWith({
+    String? id,
+    String? uniqueName,
+    String? phoneNumber,
+    List<DebitItem>? debitItems,
+    double? totalDebitMoney,
+    double? totalMoneyOwed,
+  }) {
+    return AppUser(
+      id: id ?? this.id,
+      uniqueName: uniqueName ?? this.uniqueName,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      debitItems: debitItems ?? this.debitItems,
+      totalDebitMoney: totalDebitMoney ?? this.totalDebitMoney,
+      totalMoneyOwed: totalMoneyOwed ?? this.totalMoneyOwed,
+    );
+  }
+*/
+  ;
 
   // Collection references with better naming
   CollectionReference get _usersRef => _firestore.collection(_usersCollection);
@@ -52,6 +72,7 @@ class FirestoreService {
         phoneNumber: phoneNumber.trim(),
         totalDebitMoney: 0.0,
         totalMoneyOwed: 0.0,
+        debitItems: [],
       );
 
       final docRef = await _usersRef.add(user.toMap());
@@ -66,17 +87,16 @@ class FirestoreService {
   }
 
   /// Get all users as a stream with better error handling
- Future<List<AppUser>> getAllUsers() async {
-  try {
-    final snapshot = await _usersRef.get(); // one-time fetch from Firestore
-    return _mapSnapshotToUsers(snapshot);
-  } catch (error) {
-    throw FirebaseFailure.fromException(
-      Exception('Failed to get users: $error'),
-    );
+  Future<List<AppUser>> getAllUsers() async {
+    try {
+      final snapshot = await _usersRef.get(); // one-time fetch from Firestore
+      return _mapSnapshotToUsers(snapshot);
+    } catch (error) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to get users: $error'),
+      );
+    }
   }
-}
-
 
   /// Get user by ID with consistent error handling
   Future<AppUser?> getUserById(String userId) async {
@@ -188,8 +208,7 @@ class FirestoreService {
   // ============ DEBIT ITEM FUNCTIONS ============
 
   /// Add debit item with transaction for consistency
- 
-Future<String> addDebitItem({
+  Future<String> addDebitItem({
     required String userId,
     required String recordName,
     required double recordMoneyValue,
@@ -227,22 +246,298 @@ Future<String> addDebitItem({
     }
   }
 
-  /// Get debit items stream with error handling
-  Future<List<DebitItem>> getDebitItems(String userId) async {
-  try {
-    _validateUserId(userId);
+  /// Get user with all their debit items by user ID
+  Future<AppUser?> getUserWithDebitItems(String userId) async {
+    try {
+      _validateUserId(userId);
 
-    final snapshot = await _debitItemsRef(userId)
-        .orderBy(_createdAtField, descending: true)
-        .get();
+      // Get user data
+      final userDoc = await _usersRef.doc(userId).get();
+      if (!userDoc.exists) return null;
 
-    return _mapSnapshotToDebitItems(snapshot);
-  } catch (e) {
-    throw FirebaseFailure.fromException(
-      Exception('Failed to get debit items: $e'),
-    );
+      // Get debit items
+      final debitItemsSnapshot = await _debitItemsRef(
+        userId,
+      ).orderBy(_createdAtField, descending: true).get();
+
+      final debitItems = _mapSnapshotToDebitItems(debitItemsSnapshot);
+
+      // Create AppUser with debit items
+      final userData = userDoc.data() as Map<String, dynamic>;
+      final appUser = AppUser.fromMap(userData, userDoc.id);
+      // Manually create a new AppUser with debitItems since copyWith is not defined
+      return AppUser(
+        id: appUser.id,
+        uniqueName: appUser.uniqueName,
+        phoneNumber: appUser.phoneNumber,
+        totalDebitMoney: appUser.totalDebitMoney,
+        totalMoneyOwed: appUser.totalMoneyOwed,
+        debitItems: debitItems,
+        // Add any other fields from AppUser as needed
+      );
+    } catch (e) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to get user with debit items: $e'),
+      );
+    }
   }
-}
+
+  /// Get user with all their debit items by unique name
+  Future<AppUser?> getUserWithDebitItemsByName(String uniqueName) async {
+    try {
+      if (uniqueName.trim().isEmpty) {
+        throw ArgumentError('Unique name cannot be empty');
+      }
+
+      // First get user by unique name
+      final userSnapshot = await _usersRef
+          .where(_uniqueNameField, isEqualTo: uniqueName.trim())
+          .limit(1)
+          .get();
+
+      if (userSnapshot.docs.isEmpty) return null;
+
+      final userDoc = userSnapshot.docs.first;
+      final userId = userDoc.id;
+
+      // Get debit items for this user
+      final debitItemsSnapshot = await _debitItemsRef(
+        userId,
+      ).orderBy(_createdAtField, descending: true).get();
+
+      final debitItems = _mapSnapshotToDebitItems(debitItemsSnapshot);
+
+      // Create AppUser with debit items
+      final userData = userDoc.data() as Map<String, dynamic>;
+      final appUser = AppUser.fromMap(userData, userId);
+      // If AppUser does not have a copyWith method, create a new instance with debitItems manually
+      return AppUser(
+        id: appUser.id,
+        uniqueName: appUser.uniqueName,
+        // Add other fields from appUser as needed
+        debitItems: appUser.debitItems,
+        phoneNumber: appUser.phoneNumber,
+        totalDebitMoney: appUser.totalDebitMoney,
+        totalMoneyOwed: appUser.totalMoneyOwed,
+      );
+    } catch (e) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to get user with debit items by name: $e'),
+      );
+    }
+  }
+
+  /// Get all users with their debit items (use with caution for large datasets)
+
+  /*
+  Future<List<AppUser>> getAllUsersWithDebitItems() async {
+    try {
+      final usersSnapshot = await _usersRef.get();
+      final List<AppUser> usersWithDebitItems = [];
+
+      for (final userDoc in usersSnapshot.docs) {
+        // Get debit items for each user
+        final debitItemsSnapshot = await _debitItemsRef(userDoc.id)
+            .orderBy(_createdAtField, descending: true)
+            .get();
+
+        final debitItems = _mapSnapshotToDebitItems(debitItemsSnapshot);
+        
+        final userData = userDoc.data() as Map<String, dynamic>;
+        final appUser = AppUser.fromMap(userData, userDoc.id);
+        // Manually create a new AppUser with debitItems since copyWith is not defined
+        final userWithDebitItems = AppUser(
+          id: appUser.id,
+          uniqueName: appUser.uniqueName,
+          phoneNumber: appUser.phoneNumber,
+          totalDebitMoney: appUser.totalDebitMoney,
+          totalMoneyOwed: appUser.totalMoneyOwed,
+          debitItems: debitItems,
+          // Add other fields from appUser as needed
+        );
+        usersWithDebitItems.add(userWithDebitItems);
+
+      return usersWithDebitItems;
+    } catch (e) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to get all users with debit items: $e'),
+      );
+    }
+  }
+  */
+
+  /// Get users with debit items filtered by status
+
+  /*
+  Future<List<AppUser>> getUsersWithDebitItemsByStatus(String status) async {
+    try {
+      if (status.trim().isEmpty) {
+        throw ArgumentError('Status cannot be empty');
+      }
+
+      final usersSnapshot = await _usersRef.get();
+      final List<AppUser> usersWithFilteredDebitItems = [];
+
+      for (final userDoc in usersSnapshot.docs) {
+        // Get filtered debit items for each user
+        final debitItemsSnapshot = await _debitItemsRef(userDoc.id)
+            .where(_statusField, isEqualTo: status.trim().toLowerCase())
+            .orderBy(_createdAtField, descending: true)
+            .get();
+
+        final debitItems = _mapSnapshotToDebitItems(debitItemsSnapshot);
+        
+        // Only include users who have debit items with the specified status
+        if (debitItems.isNotEmpty) {
+          final userData = userDoc.data() as Map<String, dynamic>;
+          final appUser = AppUser.fromMap(userData, userDoc.id);
+          // Manually create a new AppUser with debitItems since copyWith is not defined
+          final userWithDebitItems = AppUser(
+            id: appUser.id,
+            uniqueName: appUser.uniqueName,
+            phoneNumber: appUser.phoneNumber,
+            totalDebitMoney: appUser.totalDebitMoney,
+            totalMoneyOwed: appUser.totalMoneyOwed,
+            debitItems: debitItems,
+            // Add other fields from appUser as needed
+          );
+          usersWithFilteredDebitItems.add(userWithDebitItems);
+        }
+
+      return usersWithFilteredDebitItems;
+    } catch (e) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to get users with debit items by status: $e'),
+      );
+    }
+  }
+
+*/
+
+  /// Get user's debit items within a date range
+  Future<List<DebitItem>> getUserDebitItemsByDateRange({
+    required String userId,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    try {
+      _validateUserId(userId);
+
+      if (startDate.isAfter(endDate)) {
+        throw ArgumentError('Start date cannot be after end date');
+      }
+
+      final snapshot = await _debitItemsRef(userId)
+          .where(
+            _createdAtField,
+            isGreaterThanOrEqualTo: Timestamp.fromDate(startDate),
+          )
+          .where(
+            _createdAtField,
+            isLessThanOrEqualTo: Timestamp.fromDate(endDate),
+          )
+          .orderBy(_createdAtField, descending: true)
+          .get();
+
+      return _mapSnapshotToDebitItems(snapshot);
+    } catch (e) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to get user debit items by date range: $e'),
+      );
+    }
+  }
+
+  /// Get aggregated data for all users with debit items
+  Future<Map<String, dynamic>> getAggregatedDebitData() async {
+    try {
+      final usersSnapshot = await _usersRef.get();
+
+      int totalUsers = usersSnapshot.docs.length;
+      int totalDebitItems = 0;
+      double totalDebitMoney = 0.0;
+      double totalMoneyOwed = 0.0;
+      Map<String, int> statusCount = {};
+      Map<String, double> statusTotal = {};
+
+      for (final userDoc in usersSnapshot.docs) {
+        final userData = userDoc.data() as Map<String, dynamic>;
+        totalDebitMoney += (userData[_totalDebitMoneyField] ?? 0.0).toDouble();
+        totalMoneyOwed += (userData[_totalMoneyOwedField] ?? 0.0).toDouble();
+
+        // Get debit items for detailed status analysis
+        final debitItemsSnapshot = await _debitItemsRef(userDoc.id).get();
+        totalDebitItems += debitItemsSnapshot.docs.length;
+
+        for (final debitDoc in debitItemsSnapshot.docs) {
+          final debitData = debitDoc.data() as Map<String, dynamic>;
+          final status = (debitData[_statusField] ?? 'unknown')
+              .toString()
+              .toLowerCase();
+          final money = (debitData[_recordMoneyValueField] ?? 0.0).toDouble();
+
+          statusCount[status] = (statusCount[status] ?? 0) + 1;
+          statusTotal[status] = (statusTotal[status] ?? 0.0) + money;
+        }
+      }
+
+      return {
+        'totalUsers': totalUsers,
+        'totalDebitItems': totalDebitItems,
+        'totalDebitMoney': totalDebitMoney,
+        'totalMoneyOwed': totalMoneyOwed,
+        'statusCount': statusCount,
+        'statusTotal': statusTotal,
+        'averageDebitPerUser': totalUsers > 0
+            ? totalDebitMoney / totalUsers
+            : 0.0,
+        'averageItemsPerUser': totalUsers > 0
+            ? totalDebitItems / totalUsers
+            : 0.0,
+      };
+    } catch (e) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to get aggregated debit data: $e'),
+      );
+    }
+  }
+
+  /// Get debit items for a specific user
+  Future<List<DebitItem>> getDebitItems(String userId) async {
+    try {
+      _validateUserId(userId);
+
+      final snapshot = await _debitItemsRef(
+        userId,
+      ).orderBy(_createdAtField, descending: true).get();
+
+      return _mapSnapshotToDebitItems(snapshot);
+    } catch (e) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to get debit items: $e'),
+      );
+    }
+  }
+
+  /// Get debit items stream for real-time updates
+  Stream<List<DebitItem>> getDebitItemsStream(String userId) {
+    try {
+      _validateUserId(userId);
+
+      return _debitItemsRef(userId)
+          .orderBy(_createdAtField, descending: true)
+          .snapshots()
+          .map((snapshot) => _mapSnapshotToDebitItems(snapshot))
+          .handleError((error) {
+            throw FirebaseFailure.fromException(
+              Exception('Failed to get debit items stream: $error'),
+            );
+          });
+    } catch (e) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to initialize debit items stream: $e'),
+      );
+    }
+  }
 
   /// Get debit item by ID
   Future<DebitItem?> getDebitItemById(String userId, String debitItemId) async {
@@ -283,9 +578,8 @@ Future<String> addDebitItem({
       }
 
       if (recordMoneyValue != null) {
-        if (recordMoneyValue < 0) {
+        if (recordMoneyValue < 0)
           throw ArgumentError('Money value cannot be negative');
-        }
         updates[_recordMoneyValueField] = recordMoneyValue;
       }
 
@@ -379,7 +673,7 @@ Future<String> addDebitItem({
         _totalMoneyOwedField: totals.totalOwed,
       });
     } catch (e) {
-      log('Error updating user totals in transaction: $e');
+      print('Error updating user totals in transaction: $e');
       rethrow;
     }
   }

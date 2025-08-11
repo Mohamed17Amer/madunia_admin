@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_circle_avatar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
-import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
+import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 
 class UserDetailsProfileSection extends StatelessWidget {
   final AppUser? user;

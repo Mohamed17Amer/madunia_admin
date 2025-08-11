@@ -4,7 +4,7 @@ import 'package:madunia_admin/core/utils/widgets/custom_app_bar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_buttom.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt_form_field.dart';
-import 'package:madunia_admin/features/app/data/models/app_user_model.dart';
+import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/debit_report/presentation/view_model/cubits/add_new_debit_item_cubit/add_debit_item_cubit.dart';
 
 class AddNewDebitItemScreenBody extends StatelessWidget {
