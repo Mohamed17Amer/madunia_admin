@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_app_bar.dart';
+import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/features/all_users/presentation/view/widgets/all_users_sliver_list.dart';
 import 'package:madunia_admin/features/all_users/presentation/view_model/cubit/all_users_cubit.dart';
 
@@ -24,10 +25,18 @@ class AllUsersScreen extends StatelessWidget {
                 SliverToBoxAdapter(child: SizedBox(height: 20)),
 
                 if (state is GetAllUsersSuccess) ...[
-                  AllUsersSliverList(users: state.users),
+                  if (state.users.isEmpty) ...[
+                    const SliverFillRemaining(
+                      child: Center(
+                        child: CustomTxt(title: "No users added yet"),
+                      ),
+                    ),
+                  ] else ...[
+                    AllUsersSliverList(users: state.users),
+                  ],
                 ] else if (state is GetAllUsersFailure) ...[
                   SliverFillRemaining(
-                    child: Center(child: Text(state.errmesg)),
+                    child: Center(child: CustomTxt(title: state.errmesg)),
                   ),
                 ] else ...[
                   const SliverFillRemaining(

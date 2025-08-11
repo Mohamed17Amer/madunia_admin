@@ -46,8 +46,8 @@ class DebitScreenBody extends StatelessWidget {
                 SliverFillRemaining(
                   child: Center(child: Text(state.errmesg)),
                 ),
-              ],
-              if (state is GetAllDebitItemsLoading) ...[
+              ]
+              else... [
                 const SliverFillRemaining(
                   child: Center(child: CircularProgressIndicator()),
                 ),

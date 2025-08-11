@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class DebitItem {
   final String id;
   final String recordName;
@@ -11,6 +13,7 @@ class DebitItem {
     required this.recordMoneyValue,
     required this.status,
     this.additionalFields,
+    required FieldValue createdAt,
   });
 
   factory DebitItem.fromMap(Map<String, dynamic> map, String documentId) {
@@ -19,7 +22,10 @@ class DebitItem {
       recordName: map['recordName'] ?? '',
       recordMoneyValue: (map['recordMoneyValue'] ?? 0.0).toDouble(),
       status: map['status'] ?? 'pending',
-      additionalFields: Map<String, dynamic>.from(map['additionalFields'] ?? {}),
+      additionalFields: Map<String, dynamic>.from(
+        map['additionalFields'] ?? {},
+      ),
+      createdAt: FieldValue.serverTimestamp(), // Add this field
     );
   }
 
@@ -29,6 +35,7 @@ class DebitItem {
       'recordMoneyValue': recordMoneyValue,
       'status': status,
       'additionalFields': additionalFields ?? {},
+      'createdAt': FieldValue.serverTimestamp(), // Add this field
     };
   }
 }

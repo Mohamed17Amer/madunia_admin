@@ -1,6 +1,11 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/services/firebase_sevices.dart';
+import 'package:madunia_admin/core/utils/router/app_screens.dart';
+import 'package:madunia_admin/features/debit_report/presentation/view_model/cubits/debit_report_cubit/debit_report_cubit.dart';
 
 part 'add_debit_item_state.dart';
 
@@ -24,7 +29,7 @@ class AddDebitItemCubit extends Cubit<AddDebitItemState> {
   }
 
   void addNewDebitItem({
-    BuildContext? context,
+    required BuildContext context,
     required String userId,
   }) async {
     if (checkRequestValidation()) {
@@ -35,8 +40,17 @@ class AddDebitItemCubit extends Cubit<AddDebitItemState> {
 
         userId: userId,
       );
-      ScaffoldMessenger.of(context!).showSnackBar(
-        const SnackBar(content: Text('تمت إضافة العنصر إلى المديونية')),
+
+      emit(AddNewDebitItemSuccess());
+
+      showToastification(
+        context: context,
+        message: 'تمت إضافة العنصر إلى المديونية',
+      );
+
+      navigateReplacementWithGoRouter(
+        context: context,
+        path: AppScreens.debitScreen,
       );
     }
   }

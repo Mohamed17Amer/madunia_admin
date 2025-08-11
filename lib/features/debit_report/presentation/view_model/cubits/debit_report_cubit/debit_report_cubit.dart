@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:madunia_admin/core/helper/helper_funcs.dart';
@@ -14,7 +16,7 @@ class DebitReportCubit extends Cubit<DebitReportState> {
   void sendAlarmToUser({required BuildContext context}) {
     showToastification(context: context, message: "تم إرسال تنبيه للدفع");
 
-    emit(SendAlarmToUserSuccess());
+   // emit(SendAlarmToUserSuccess());
   }
 
   void navigateTo({
@@ -29,6 +31,9 @@ class DebitReportCubit extends Cubit<DebitReportState> {
     try {
       final allUserItemDebits =await firestoreService.getDebitItems(userId);
       emit(GetAllDebitItemsSuccess(allUserItemDebits: allUserItemDebits));
+      log("all debits$allUserItemDebits");
+      log("idddddddddddvvv   $userId");
+      return allUserItemDebits;
     } catch (e) {
       emit(GetAllDebitItemsFailure(errmesg: e.toString()));
     }

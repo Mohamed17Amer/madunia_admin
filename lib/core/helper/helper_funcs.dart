@@ -61,4 +61,8 @@ void navigateToWithGoRouter({required BuildContext context, required String path
 }
 
 
+void navigateReplacementWithGoRouter({required BuildContext context, required String path, dynamic extra, }) {
+  GoRouter.of(context).replace(path, extra: extra);
+}
+
 // context.read<UserDetailsCubit>().navigateTo( context: context,path: AppScreens.debitScreen, );
