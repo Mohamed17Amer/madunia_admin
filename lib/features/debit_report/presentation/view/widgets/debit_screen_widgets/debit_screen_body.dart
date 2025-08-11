@@ -13,7 +13,13 @@ class DebitScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DebitReportCubit, DebitReportState>(
+    return BlocConsumer<DebitReportCubit, DebitReportState>(
+      listener: (context, state) {
+        if (state is! GetAllDebitItemsSuccess) {
+          context.read<DebitReportCubit>().getAllDebitItems(userId: user.id);
+        }
+      },
+
       builder: (context, state) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
@@ -41,18 +47,13 @@ class DebitScreenBody extends StatelessWidget {
               if (state is GetAllDebitItemsSuccess) ...[
                 // debit items list
                 DebitSliverList(allUserItemDebits: state.allUserItemDebits),
-              ],
-              if (state is GetAllDebitItemsFailure) ...[
-                SliverFillRemaining(
-                  child: Center(child: Text(state.errmesg)),
-                ),
-              ]
-              else... [
+              ] else if (state is GetAllDebitItemsFailure) ...[
+                SliverFillRemaining(child: Center(child: Text(state.errmesg))),
+              ] else ...[
                 const SliverFillRemaining(
                   child: Center(child: CircularProgressIndicator()),
                 ),
               ],
-
             ],
           ),
         );

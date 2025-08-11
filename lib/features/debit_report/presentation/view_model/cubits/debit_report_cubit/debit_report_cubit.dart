@@ -13,13 +13,13 @@ class DebitReportCubit extends Cubit<DebitReportState> {
 
   FirestoreService firestoreService = FirestoreService();
 
-  void sendAlarmToUser({required BuildContext context}) {
+   sendAlarmToUser({required BuildContext context}) {
     showToastification(context: context, message: "تم إرسال تنبيه للدفع");
 
    // emit(SendAlarmToUserSuccess());
   }
 
-  void navigateTo({
+   navigateTo({
     required BuildContext context,
     required String path,
     dynamic extra,

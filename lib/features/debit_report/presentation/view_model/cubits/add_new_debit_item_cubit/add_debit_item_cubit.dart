@@ -2,10 +2,11 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/services/firebase_sevices.dart';
 import 'package:madunia_admin/core/utils/router/app_screens.dart';
-import 'package:madunia_admin/features/debit_report/presentation/view_model/cubits/debit_report_cubit/debit_report_cubit.dart';
+import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 
 part 'add_debit_item_state.dart';
 
@@ -30,28 +31,34 @@ class AddDebitItemCubit extends Cubit<AddDebitItemState> {
 
   void addNewDebitItem({
     required BuildContext context,
-    required String userId,
+    required AppUser user,
   }) async {
     if (checkRequestValidation()) {
-      await firestoreService.addDebitItem(
-        recordName: debitItemNameController.text,
-        recordMoneyValue: double.parse(debitItemValueController.text),
-        status: "pending",
+      try {
+        final debitItem = await firestoreService.addDebitItem(
+          recordName: debitItemNameController.text,
+          recordMoneyValue: double.parse(debitItemValueController.text),
+          status: "pending",
 
-        userId: userId,
-      );
+          userId: user.id,
+        );
 
-      emit(AddNewDebitItemSuccess());
+        emit(AddNewDebitItemSuccess(debitItem: debitItem));
 
-      showToastification(
-        context: context,
-        message: 'تمت إضافة العنصر إلى المديونية',
-      );
+        showToastification(
+          context: context,
+          message: 'تمت إضافة العنصر إلى المديونية',
+        );
 
-      navigateReplacementWithGoRouter(
-        context: context,
-        path: AppScreens.debitScreen,
-      );
+        navigateReplacementWithGoRouter(
+          context: context,
+          path: AppScreens.debitScreen,
+          extra: user,
+        );
+        // Then navigate back
+      } catch (e) {
+        Navigator.of(context).pop(false); // Return true to indicate success
+      }
     }
   }
 

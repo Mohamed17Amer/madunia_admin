@@ -69,7 +69,7 @@ class AddNewDebitItemScreenBody extends StatelessWidget {
                 onPressed: () {
                   context.read<AddDebitItemCubit>().addNewDebitItem(
                     context: context,
-                    userId: user.id
+                    user: user
                     
                   );
                 },
