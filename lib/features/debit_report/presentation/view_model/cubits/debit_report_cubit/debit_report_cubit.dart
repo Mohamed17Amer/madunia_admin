@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/services/firebase_sevices.dart';
+import 'package:madunia_admin/features/debit_report/data/models/debit_item_model.dart';
 
 part 'debit_report_state.dart';
 
@@ -12,20 +13,13 @@ class DebitReportCubit extends Cubit<DebitReportState> {
 
   FirestoreService firestoreService = FirestoreService();
 
-  navigateTo({
-    required BuildContext context,
-    required String path,
-    dynamic extra,
-  }) {
-    navigateReplacementWithGoRouter(context: context, path: path, extra: extra);
-  }
-
+ 
   getAllDebitItems({required String userId}) async {
     try {
       final allUserItemDebits = await firestoreService.getDebitItems(userId);
       emit(GetAllDebitItemsSuccess(allUserItemDebits: allUserItemDebits));
       log("all debits$allUserItemDebits");
-      log("idddddddddddvvv   $userId");
+      log("id  $userId");
       return allUserItemDebits;
     } catch (e) {
       emit(GetAllDebitItemsFailure(errmesg: e.toString()));
@@ -55,4 +49,13 @@ Future<void> deleteDebitItem({
 
     // emit(SendAlarmToUserSuccess());
   }
+
+   navigateTo({
+    required BuildContext context,
+    required String path,
+    dynamic extra,
+  }) {
+    navigateReplacementWithGoRouter(context: context, path: path, extra: extra);
+  }
+
 }

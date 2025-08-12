@@ -11,6 +11,10 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
 
   FirestoreService firestoreService = FirestoreService();
 
+  final userPaymentDetailsCategoriess = ["عليه", "له"];
+
+  final userOtherDrtailsCategoriess = ["البلاغات"];
+
   getTotalMoney({required String userId}) async {
     final List<double> total = [0, 0];
     total[0] = await firestoreService.getTotalDebitMoney(userId);
@@ -19,10 +23,6 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
     log(total.toString());
     return total;
   }
-
-  final userPaymentDetailsCategoriess = ["عليه", "له"];
-
-  final userOtherDrtailsCategoriess = ["البلاغات"];
 
   void copyUserNameToClipboard(String userUniqueName) {
     copyToClipboard(text: userUniqueName);
@@ -39,15 +39,15 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
     // emit(CopyTotalToClipboardSuccess(total));
   }
 
+  void copyUserPhoneToClipboard(String userPhone) {
+    copyToClipboard(text: userPhone);
+  }
+
   void navigateTo({
     required BuildContext context,
     required String path,
     required dynamic extra,
   }) {
     navigateToWithGoRouter(context: context, path: path, extra: extra);
-  }
-
-  void copyUserPhoneToClipboard(String userPhone) {
-    copyToClipboard(text: userPhone);
   }
 }

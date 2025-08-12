@@ -10,7 +10,7 @@ final class ValidateTxtFormFieldSuccess extends AddUserState {}
 final class ValidateTxtFormFieldFailure extends AddUserState {}
 
 final class GenerateNewUserUniqueNameSuccess extends AddUserState {
-  String? uniqueName;
+  final String? uniqueName;
   GenerateNewUserUniqueNameSuccess({this.uniqueName}) {
     log("unique name is   $uniqueName");
   }

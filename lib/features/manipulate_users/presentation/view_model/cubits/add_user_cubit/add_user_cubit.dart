@@ -19,48 +19,26 @@ class AddUserCubit extends Cubit<AddUserState> {
 
   FirestoreService firestoreService = FirestoreService();
 
+  String? validateTxtFormField({
+    required String? value,
+    required String? errorHint,
+  }) {
+    if (value == null || value.isEmpty) {
+      emit(ValidateTxtFormFieldFailure());
+
+      return errorHint!;
+    }
+    emit(ValidateTxtFormFieldSuccess());
+
+    return null;
+  }
+
   bool checkRequestValidation() {
     if (addUserScreenKey.currentState!.validate()) {
       return true;
     } else {
       return false;
     }
-  }
-
-   addNewUser({BuildContext? context}) {
-    if (checkRequestValidation() && isUniqueNameGenerated) {
-      firestoreService
-          .createUser(
-            phoneNumber: userPhoneController.text,
-            uniqueName: uniqueName,
-          )
-          .then((value) {});
-
-      ScaffoldMessenger.of(
-        context!,
-      ).showSnackBar(const SnackBar(content: Text('تمت إضافة العضو الجديد')));
-
-      emit(AddNewUserSuccess(uniqueName: uniqueName));
-    } else {
-      ScaffoldMessenger.of(context!).showSnackBar(
-        const SnackBar(content: Text('من فضلك، قم بإنشاء الاسم المميز')),
-      );
-    }
-    emit(AddNewUserFailure(uniqueName: uniqueName));
-  }
-
-  String? validateTxtFormField({
-    required String? value,
-    required String? errorHint,
-  }) {
-    if (value == null || value.isEmpty) {
-      emit(ValidateTxtFormFieldSuccess());
-
-      return errorHint!;
-    }
-    emit(ValidateTxtFormFieldFailure());
-
-    return null;
   }
 
   void generateNewUserUniqueName({required BuildContext context}) {
@@ -89,5 +67,27 @@ class AddUserCubit extends Cubit<AddUserState> {
     uniqueName = "";
     userNameController.text = "";
     userPhoneController.text = "";
+  }
+
+  addNewUser({BuildContext? context}) {
+    if (checkRequestValidation() && isUniqueNameGenerated) {
+      firestoreService
+          .createUser(
+            phoneNumber: userPhoneController.text,
+            uniqueName: uniqueName,
+          )
+          .then((value) {});
+
+      ScaffoldMessenger.of(
+        context!,
+      ).showSnackBar(const SnackBar(content: Text('تمت إضافة العضو الجديد')));
+
+      emit(AddNewUserSuccess(uniqueName: uniqueName));
+    } else {
+      ScaffoldMessenger.of(context!).showSnackBar(
+        const SnackBar(content: Text('من فضلك، قم بإنشاء الاسم المميز')),
+      );
+    }
+    emit(AddNewUserFailure(uniqueName: uniqueName));
   }
 }
