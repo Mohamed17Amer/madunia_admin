@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/utils/colors/app_colors.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_app_bar.dart';
+import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/debit_report/presentation/view/widgets/add_debit_item_screen_widgets/add_new_debit_item_button.dart';
 import 'package:madunia_admin/features/debit_report/presentation/view/widgets/debit_screen_widgets/debit_sliver_list.dart';
@@ -45,8 +46,17 @@ class DebitScreenBody extends StatelessWidget {
               ),
 
               if (state is GetAllDebitItemsSuccess) ...[
-                // debit items list
-                DebitSliverList(allUserItemDebits: state.allUserItemDebits),
+                if (state.allUserItemDebits.isEmpty) ...[
+                  SliverFillRemaining(
+                    child: Center(
+                      child:  CustomTxt(title: "No Items Added Yet")
+                    )
+
+                  ),
+                ] else ...[
+                  // debit items list
+                  DebitSliverList(allUserItemDebits: state.allUserItemDebits),
+                ],
               ] else if (state is GetAllDebitItemsFailure) ...[
                 SliverFillRemaining(child: Center(child: Text(state.errmesg))),
               ] else ...[

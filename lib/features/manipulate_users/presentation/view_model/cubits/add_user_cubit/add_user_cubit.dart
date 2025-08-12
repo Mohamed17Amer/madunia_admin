@@ -27,7 +27,7 @@ class AddUserCubit extends Cubit<AddUserState> {
     }
   }
 
-  void addNewUser({BuildContext? context}) {
+   addNewUser({BuildContext? context}) {
     if (checkRequestValidation() && isUniqueNameGenerated) {
       firestoreService
           .createUser(
@@ -75,10 +75,19 @@ class AddUserCubit extends Cubit<AddUserState> {
       isUniqueNameGenerated = true;
       uniqueName = "${userNameController.text}_$uniqueCode";
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم إنشاء الاسم المميز للعضو الجديد')),
+      showToastification(
+        context: context,
+        message: " تم إنشاء الاسم المميز للعضو الجديد",
       );
+
       emit(GenerateNewUserUniqueNameSuccess(uniqueName: uniqueName));
     }
+  }
+
+  resetSettings() {
+    isUniqueNameGenerated = false;
+    uniqueName = "";
+    userNameController.text = "";
+    userPhoneController.text = "";
   }
 }

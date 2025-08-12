@@ -18,7 +18,7 @@ class UserOtherDetailsCardsGridView extends StatelessWidget {
          
           },
 
-          child: UserDetailsCardItem(user:user!, index:index, flag:"others"),
+          child: UserDetailsCardItem(user:user!, index:index, flag:"others", ),
         );
       },
       itemCount: context

@@ -14,7 +14,7 @@ class UserDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => UserDetailsCubit(),
+      create: (context) => UserDetailsCubit()..getTotalMoney(userId: user!.id),
       child: BlocBuilder<UserDetailsCubit, UserDetailsState>(
         builder: (context, state) {
           return CustomScaffold(
@@ -34,14 +34,24 @@ class UserDetailsScreen extends StatelessWidget {
                   SliverToBoxAdapter(child: SizedBox(height: 20)),
 
                   // Grid view section
-                  SliverToBoxAdapter(
-                    child: UserPaymentDetailsCardsGridView(user: user),
-                  ),
-                  SliverToBoxAdapter(child: SizedBox(height: 5)),
+                  if (state is GetTotalMoneySuccess) ...[
+                    SliverToBoxAdapter(
+                      child: UserPaymentDetailsCardsGridView(
+                        user: user,
+                        totals: state.total,
+                      ),
+                    ),
+                    SliverToBoxAdapter(child: SizedBox(height: 5)),
 
-                  SliverToBoxAdapter(
-                    child: UserOtherDetailsCardsGridView(user: user),
-                  ),
+                    SliverToBoxAdapter(
+                      child: UserOtherDetailsCardsGridView(user: user),
+                    ),
+                  ]
+                  else ...[
+                    const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  ]
                 ],
               ),
             ),

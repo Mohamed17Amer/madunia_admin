@@ -20,4 +20,15 @@ final class CopyTotalToClipboardFailure extends UserDetailsState {
       log ("user_details_cubit   errorMesg = $errorMesg ");
     }
 
+    
+
+}
+
+
+
+final class GetTotalMoneySuccess extends UserDetailsState{
+final List<double> total;
+GetTotalMoneySuccess({required this.total});
+
+
 }

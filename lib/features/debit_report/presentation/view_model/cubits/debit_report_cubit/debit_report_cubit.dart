@@ -24,7 +24,7 @@ class DebitReportCubit extends Cubit<DebitReportState> {
     required String path,
     dynamic extra,
   }) {
-    navigateToWithGoRouter(context: context, path: path, extra: extra);
+    navigateReplacementWithGoRouter(context: context, path: path, extra: extra);
   }
 
   getAllDebitItems({required String userId}) async{

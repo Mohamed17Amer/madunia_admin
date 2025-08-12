@@ -87,8 +87,11 @@ class AddNewUserBody extends StatelessWidget {
                   title: "  إضافة العضو",
                   fontColor: Colors.white,
                 ),
-                onPressed: () {
-                  context.read<AddUserCubit>().addNewUser(context: context);
+                onPressed: () async {
+                  await context.read<AddUserCubit>().addNewUser(
+                    context: context,
+                  );
+                  await context.read<AddUserCubit>().resetSettings();
                 },
               ),
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:madunia_admin/core/services/firebase_sevices.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_icon.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
@@ -8,17 +9,11 @@ import 'package:madunia_admin/features/user_details/presentation/view_model/cubi
 class UserPaymentDetailsCardItemBody extends StatelessWidget {
   final AppUser? user;
   final int? index;
-  late var total;
-  UserPaymentDetailsCardItemBody({super.key, this.user, this.index}) {
-    if (index == 0) {
-      total = user?.totalDebitMoney ?? 0.00;
-    } else if (index == 1)
-      // ignore: curly_braces_in_flow_control_structures
-      total = user?.totalMoneyOwed ?? 0.00;
-    else {
-      total = 0.00;
-    }
-  }
+  final double? total;
+
+  UserPaymentDetailsCardItemBody({super.key, this.user, this.index, required this. total});
+
+  FirestoreService firestoreService = FirestoreService();
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +27,8 @@ class UserPaymentDetailsCardItemBody extends StatelessWidget {
           child: CustomTxt(
             title: context
                 .read<UserDetailsCubit>()
-                .userPaymentDetailsCategoriess[index!], fontWeight: FontWeight.bold
-            ,
+                .userPaymentDetailsCategoriess[index!],
+            fontWeight: FontWeight.bold,
           ),
         ),
 
@@ -41,7 +36,7 @@ class UserPaymentDetailsCardItemBody extends StatelessWidget {
         Align(
           alignment: Alignment.topLeft,
           child: CustomTxt(
-            title: "${total ?? 00.00} جنيه مصري ",
+            title: "${total} جنيه مصري ",
             fontWeight: FontWeight.bold,
           ),
         ),

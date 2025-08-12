@@ -7,7 +7,8 @@ import 'package:madunia_admin/features/user_details/presentation/view_model/cubi
 
 class UserPaymentDetailsCardsGridView extends StatelessWidget {
  final AppUser? user;
-  const UserPaymentDetailsCardsGridView({super.key, this.user});
+ final List<double>? totals;
+  const UserPaymentDetailsCardsGridView({super.key, required this.user, required this.totals});
 
 
   @override
@@ -25,7 +26,7 @@ class UserPaymentDetailsCardsGridView extends StatelessWidget {
             }
           },
 
-          child: UserDetailsCardItem(user:user!, index:index, flag:"payment"),
+          child: UserDetailsCardItem(user:user!, index:index, flag:"payment", total:totals![index]),
         );
       },
       itemCount: context

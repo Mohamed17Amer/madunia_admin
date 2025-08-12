@@ -8,18 +8,19 @@ class UserDetailsCardItem extends StatelessWidget {
   final AppUser? user;
   final int? index;
   final String? flag;
+  final double? total;
   const UserDetailsCardItem({
     super.key,
     this.user,
     this.index,
-    required this.flag,
+    required this.flag,  this.total,
   });
 
   @override
   Widget build(BuildContext context) {
     return UserDetailsCardItemContainer(
       itemBody: (flag == "payment")
-          ? UserPaymentDetailsCardItemBody(user: user!, index: index!)
+          ? UserPaymentDetailsCardItemBody(user: user!, index: index!, total: total)
           : UserOtherDetailsCardItemBody(user: user!, index: index!),
     );
   }
