@@ -6,6 +6,7 @@ import 'package:madunia_admin/features/all_users/presentation/view/pages/all_use
 import 'package:madunia_admin/features/app/presentation/view/pages/starting_screen.dart';
 import 'package:madunia_admin/features/debit_report/presentation/view/pages/debit_screen.dart';
 import 'package:madunia_admin/features/manipulate_users/presentation/view/pages/add_new_user_screen.dart';
+import 'package:madunia_admin/features/manipulate_users/presentation/view/pages/delete_user_screen.dart';
 import 'package:madunia_admin/features/manipulate_users/presentation/view/pages/manipulate_users_screen.dart';
 import 'package:madunia_admin/features/user_details/presentation/view/pages/user_details_screen.dart';
 import 'package:madunia_admin/features/instructions/presentation/view/pages/annimated_instructions_screen.dart';
@@ -72,6 +73,13 @@ abstract class AppRouter {
         path: AppScreens.addNewUserScreen,
         builder: (context, state) {
           return AddNewUserScreen();
+        },
+      ),
+
+      GoRoute(
+        path: AppScreens.deleteUserScreen,
+        builder: (context, state) {
+          return DeleteUserScreen();
         },
       ),
     ],

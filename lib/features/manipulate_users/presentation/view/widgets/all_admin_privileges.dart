@@ -28,7 +28,12 @@ class AllAdminPrivilegesButtons extends StatelessWidget {
         ),
 
         CustomButtom(
-          onPressed: () {},
+          onPressed: () {
+            context.read<ManipulateUsersCubit>().navigateTo(
+              context: context,
+              path: AppScreens.deleteUserScreen,
+            );
+          },
           child: const CustomTxt(
             title: "  حذف عضو موجود",
             fontColor: Colors.white,

@@ -4,6 +4,7 @@ import 'package:madunia_admin/core/utils/widgets/custom_circle_avatar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_icon.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
+import 'package:madunia_admin/features/manipulate_users/presentation/view_model/cubits/delete_user_cubit/delete_user_cubit.dart';
 import 'package:madunia_admin/features/user_details/presentation/view_model/cubit/user_details_cubit.dart';
 
 class UserDetailsProfileSection extends StatelessWidget {
@@ -27,6 +28,8 @@ class UserDetailsProfileSection extends StatelessWidget {
           const SizedBox(height: 5),
           CustomTxt(title: user!.uniqueName, fontWeight: FontWeight.bold),
           const SizedBox(height: 5),
+          CustomTxt(title: user!.phoneNumber, fontWeight: FontWeight.bold),
+          const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -46,6 +49,28 @@ class UserDetailsProfileSection extends StatelessWidget {
                 onPressed: () {
                   context.read<UserDetailsCubit>().copyUserNameToClipboard(
                     user?.uniqueName ?? "",
+                  );
+                },
+              ),
+              const SizedBox(height: 5),
+
+              CustomIcon(
+                icon: Icons.phone,
+                onPressed: () {
+                  context.read<UserDetailsCubit>().copyUserPhoneToClipboard(
+                    user?.phoneNumber ?? "",
+                  );
+                },
+              ),
+
+              const SizedBox(height: 5),
+
+              CustomIcon(
+                icon: Icons.remove_circle_outline_rounded,
+                onPressed: () {
+                  context.read<DeleteUserCubit>().deleteNewUser(
+                    context: context,
+                    id: user!.id,
                   );
                 },
               ),

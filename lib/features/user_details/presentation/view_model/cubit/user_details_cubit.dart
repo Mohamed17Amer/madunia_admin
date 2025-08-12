@@ -46,4 +46,8 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
   }) {
     navigateToWithGoRouter(context: context, path: path, extra: extra);
   }
+
+  void copyUserPhoneToClipboard(String userPhone) {
+    copyToClipboard(text: userPhone);
+  }
 }

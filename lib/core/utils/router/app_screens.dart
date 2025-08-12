@@ -10,5 +10,7 @@ class AppScreens {
   static const String addNewDebitItemScreen = "/add_new_debit_item";
   static const String manipulateUsersScreen = "/manipulate_users";
   static const String addNewUserScreen = "/add_new_user";
+  static const String deleteUserScreen = "/delete_user";
+
 
 }
