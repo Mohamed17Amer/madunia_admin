@@ -22,28 +22,37 @@ class DeleteUserCubit extends Cubit<DeleteUserState> {
     }
   }
 
-  deleteNewUser({BuildContext? context, String? id}) {
+  deleteUser({BuildContext? context, String? id}) {
     late String userId;
     if (id != null) {
       userId = id;
-    } else {
-      userId = userIdController.text;
-    }
-
-    if (checkRequestValidation()) {
       firestoreService.deleteUser(userId);
 
       ScaffoldMessenger.of(
         context!,
       ).showSnackBar(const SnackBar(content: Text('تمت   حذف العضو بنجاح')));
 
-      emit(DeleteNewUserSuccess(userId: userId));
+      emit(deleteUserSuccess(userId: userId));
     } else {
-      ScaffoldMessenger.of(context!).showSnackBar(
-        const SnackBar(content: Text(" الخاص بهذا العضو ID  من فضلك أدخل ال ")),
-      );
+      userId = userIdController.text;
+
+      if (checkRequestValidation()) {
+        firestoreService.deleteUser(userId);
+
+        ScaffoldMessenger.of(
+          context!,
+        ).showSnackBar(const SnackBar(content: Text('تمت   حذف العضو بنجاح')));
+
+        emit(deleteUserSuccess(userId: userId));
+      } else {
+        ScaffoldMessenger.of(context!).showSnackBar(
+          const SnackBar(
+            content: Text(" الخاص بهذا العضو ID  من فضلك أدخل ال "),
+          ),
+        );
+        emit(DeleteUserFailure(userId: userId));
+      }
     }
-    emit(DeleteUserFailure(userId: userId));
   }
 
   String? validateTxtFormField({

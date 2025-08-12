@@ -5,7 +5,8 @@ import 'package:madunia_admin/features/app/presentation/view/widgets/custom_bott
 import 'package:madunia_admin/features/app/presentation/view_model/cubit/app_cubit.dart';
 
 class StartingScreen extends StatefulWidget {
-  const StartingScreen({super.key});
+  final index;
+  const StartingScreen({super.key, this.index});
 
   @override
   State<StartingScreen> createState() => _StartingScreenState();
@@ -36,7 +37,7 @@ class _StartingScreenState extends State<StartingScreen> {
 
               child: BlocBuilder<AppCubit, AppState>(
                 builder: (context, state) {
-                  return AppCubit.pagesViews[AppCubit.currentIndex];
+                  return AppCubit.pagesViews[widget.index?? AppCubit.currentIndex];
                 },
               ),
             ),

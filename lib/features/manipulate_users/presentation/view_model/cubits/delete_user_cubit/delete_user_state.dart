@@ -11,9 +11,9 @@ final class ValidateTxtFormFieldFailure extends DeleteUserState {}
 
 
 
-final class DeleteNewUserSuccess extends DeleteUserState {
+final class deleteUserSuccess extends DeleteUserState {
   final String? userId;
-  DeleteNewUserSuccess({this.userId}) {
+  deleteUserSuccess({this.userId}) {
     log("Delete  user success $userId ");
   }
 }

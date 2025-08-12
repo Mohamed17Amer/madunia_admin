@@ -5,7 +5,6 @@ import 'package:madunia_admin/core/utils/widgets/custom_buttom.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_circle_avatar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt_form_field.dart';
-import 'package:madunia_admin/features/manipulate_users/presentation/view_model/cubits/add_user_cubit/add_user_cubit.dart';
 import 'package:madunia_admin/features/manipulate_users/presentation/view_model/cubits/delete_user_cubit/delete_user_cubit.dart';
 
 class DeleteUserBody extends StatelessWidget {
@@ -59,7 +58,7 @@ class DeleteUserBody extends StatelessWidget {
                   fontColor: Colors.white,
                 ),
                 onPressed: () async {
-                  await context.read<DeleteUserCubit>().deleteNewUser(
+                  await context.read<DeleteUserCubit>().deleteUser(
                     context: context,
                   
                   );
