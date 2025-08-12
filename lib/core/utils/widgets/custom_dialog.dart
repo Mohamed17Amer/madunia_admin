@@ -71,7 +71,12 @@ class CustomDialog {
                         id: userId,
                       );
 
-                      Navigator.popUntil(context, (route) => route.isFirst);
+                      context.read<DeleteUserCubit>().navigateToFirstRouteInStack(
+                        context: context,
+                        
+                      );
+
+                      
                     },
                     child: CustomTxt(title: 'تأكيد'),
                   ),

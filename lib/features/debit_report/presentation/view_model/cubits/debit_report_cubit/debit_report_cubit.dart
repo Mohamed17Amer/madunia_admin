@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -13,13 +12,7 @@ class DebitReportCubit extends Cubit<DebitReportState> {
 
   FirestoreService firestoreService = FirestoreService();
 
-   sendAlarmToUser({required BuildContext context}) {
-    showToastification(context: context, message: "تم إرسال تنبيه للدفع");
-
-   // emit(SendAlarmToUserSuccess());
-  }
-
-   navigateTo({
+  navigateTo({
     required BuildContext context,
     required String path,
     dynamic extra,
@@ -27,9 +20,9 @@ class DebitReportCubit extends Cubit<DebitReportState> {
     navigateReplacementWithGoRouter(context: context, path: path, extra: extra);
   }
 
-  getAllDebitItems({required String userId}) async{
+  getAllDebitItems({required String userId}) async {
     try {
-      final allUserItemDebits =await firestoreService.getDebitItems(userId);
+      final allUserItemDebits = await firestoreService.getDebitItems(userId);
       emit(GetAllDebitItemsSuccess(allUserItemDebits: allUserItemDebits));
       log("all debits$allUserItemDebits");
       log("idddddddddddvvv   $userId");
@@ -37,5 +30,29 @@ class DebitReportCubit extends Cubit<DebitReportState> {
     } catch (e) {
       emit(GetAllDebitItemsFailure(errmesg: e.toString()));
     }
+  }
+
+Future<void> deleteDebitItem({
+  required BuildContext context,
+  required String debitItemId,
+  required String userId,
+}) async {
+  try {
+    await firestoreService.deleteDebitItem(userId,debitItemId);
+    showToastification(context: context, message: "تم حذف العنصر");
+    emit(DeleteDebitItemSuccess(debitItemId: debitItemId));
+  } catch (e) {
+    showToastification(context: context, message: "لم يتم حذف العنصر");
+    emit(DeleteDebitItemFailure(errmesg: e.toString()));
+  }
+}
+  sendAlarmToUser({
+    required BuildContext context,
+    required String debitItemId,
+    required String userId,
+  }) {
+    showToastification(context: context, message: "تم إرسال تنبيه للدفع");
+
+    // emit(SendAlarmToUserSuccess());
   }
 }

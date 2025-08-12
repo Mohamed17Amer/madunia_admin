@@ -49,13 +49,13 @@ class DebitScreenBody extends StatelessWidget {
                 if (state.allUserItemDebits.isEmpty) ...[
                   SliverFillRemaining(
                     child: Center(
-                      child:  CustomTxt(title: "No Items Added Yet")
+                      child:  CustomTxt(title: "لم تتم إضافة عناصر بعد.")
                     )
 
                   ),
                 ] else ...[
                   // debit items list
-                  DebitSliverList(allUserItemDebits: state.allUserItemDebits),
+                  DebitSliverList(allUserItemDebits: state.allUserItemDebits, userId: user.id),
                 ],
               ] else if (state is GetAllDebitItemsFailure) ...[
                 SliverFillRemaining(child: Center(child: Text(state.errmesg))),

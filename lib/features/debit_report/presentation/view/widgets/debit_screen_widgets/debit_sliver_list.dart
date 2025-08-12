@@ -7,7 +7,8 @@ import 'package:madunia_admin/features/debit_report/presentation/view_model/cubi
 
 class DebitSliverList extends StatelessWidget {
   final List<DebitItem> allUserItemDebits;
-  const DebitSliverList({super.key,  required this.allUserItemDebits});
+  final String userId;
+  const DebitSliverList({super.key,  required this.allUserItemDebits, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class DebitSliverList extends StatelessWidget {
       builder: (context, state) {
         return SliverList.separated(
           itemBuilder: (BuildContext context, int index) {
-            return DebitReportItem(debitItem:  allUserItemDebits[index]);
+            return DebitReportItem(debitItem:  allUserItemDebits[index], userId: userId);
           },
           separatorBuilder: (BuildContext context, int index) {
             return Divider(

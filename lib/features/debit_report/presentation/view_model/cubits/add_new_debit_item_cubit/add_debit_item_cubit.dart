@@ -21,6 +21,20 @@ class AddDebitItemCubit extends Cubit<AddDebitItemState> {
 
   FirestoreService firestoreService = FirestoreService();
 
+  String? validateTxtFormField({
+    required String? value,
+    required String? errorHint,
+  }) {
+    if (value == null || value.isEmpty) {
+      emit(ValidateTxtFormFieldFailure());
+
+      return errorHint!;
+    }
+    emit(ValidateTxtFormFieldSuccess());
+
+    return null;
+  }
+
   bool checkRequestValidation() {
     if (addDebitItemScreenKey.currentState!.validate()) {
       return true;
@@ -60,19 +74,5 @@ class AddDebitItemCubit extends Cubit<AddDebitItemState> {
         Navigator.of(context).pop(false); // Return true to indicate success
       }
     }
-  }
-
-  String? validateTxtFormField({
-    required String? value,
-    required String? errorHint,
-  }) {
-    if (value == null || value.isEmpty) {
-      emit(ValidateTxtFormFieldSuccess());
-
-      return errorHint!;
-    }
-    emit(ValidateTxtFormFieldFailure());
-
-    return null;
   }
 }

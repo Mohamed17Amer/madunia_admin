@@ -11,6 +11,7 @@ import 'package:madunia_admin/features/debit_report/data/models/debit_item_model
 /// - Robust error handling and validation
 /// - Transaction-based consistency
 class FirestoreService {
+  // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Constants for better maintainability
@@ -29,12 +30,20 @@ class FirestoreService {
   static const Set<String> _owedStatuses = {'pending', 'unpaid', 'overdue'};
 
   // Collection references with better naming
+
+  // users collection
   CollectionReference get _usersRef => _firestore.collection(_usersCollection);
+
+  // debits collection
   CollectionReference _debitItemsRef(String userId) =>
       _usersRef.doc(userId).collection(_debitItemsCollection);
 
- CollectionReference _ownedItemsRef(String userId) =>
+  // owned collections
+  CollectionReference _ownedItemsRef(String userId) =>
       _usersRef.doc(userId).collection(_ownedItemsCollection);
+
+  ///  ******************************************************************************************
+
   // ============ USER FUNCTIONS ============
 
   /// Create a new user with improved error handling and validation
@@ -58,7 +67,7 @@ class FirestoreService {
         uniqueName: uniqueName.trim(),
         phoneNumber: phoneNumber.trim(),
         totalDebitMoney: 0.0,
-        totalMoneyOwed: 0.0, 
+        totalMoneyOwed: 0.0,
         debitItems: [],
       );
 
@@ -86,18 +95,6 @@ class FirestoreService {
   }
 
   /// Get user by ID with consistent error handling
-  Future<AppUser?> getUserById(String userId) async {
-    try {
-      _validateUserId(userId);
-
-      final doc = await _usersRef.doc(userId).get();
-      return doc.exists
-          ? AppUser.fromMap(doc.data() as Map<String, dynamic>, doc.id)
-          : null;
-    } catch (e) {
-      throw FirebaseFailure.fromException(Exception('Failed to get user: $e'));
-    }
-  }
 
   /// Get user by unique name with better performance
   Future<AppUser?> getUserByName(String uniqueName) async {
@@ -119,6 +116,19 @@ class FirestoreService {
       throw FirebaseFailure.fromException(
         Exception('Failed to get user by name: $e'),
       );
+    }
+  }
+
+  Future<AppUser?> getUserById(String userId) async {
+    try {
+      _validateUserId(userId);
+
+      final doc = await _usersRef.doc(userId).get();
+      return doc.exists
+          ? AppUser.fromMap(doc.data() as Map<String, dynamic>, doc.id)
+          : null;
+    } catch (e) {
+      throw FirebaseFailure.fromException(Exception('Failed to get user: $e'));
     }
   }
 
@@ -192,9 +202,11 @@ class FirestoreService {
     }
   }
 
+  ///  ******************************************************************************************
+
   // ============ DEBIT ITEM FUNCTIONS ============
 
-  /// Add debit item with automatic timestamp and total calculation
+  /// FIXED: Add debit item with automatic timestamp and total calculation
   Future<String> addDebitItem({
     required String userId,
     required String recordName,
@@ -211,19 +223,26 @@ class FirestoreService {
         'recordName': recordName.trim(),
         'recordMoneyValue': recordMoneyValue,
         'status': status.trim().toLowerCase(),
-        'createdAt': FieldValue.serverTimestamp(), // Server timestamp ensures consistency
+        'createdAt': FieldValue.serverTimestamp(),
         if (additionalFields != null) 'additionalFields': additionalFields,
       };
 
       // Use transaction to ensure consistency
       late String docId;
       await _firestore.runTransaction((transaction) async {
+        // Read debit items first (outside transaction since it's a collection)
+        final debitItemsSnapshot = await _debitItemsRef(userId).get();
+        
+        // Add new item
         final docRef = _debitItemsRef(userId).doc();
         transaction.set(docRef, debitItemData);
         docId = docRef.id;
 
-        // Update user totals in the same transaction
-        await _updateUserTotalsInTransaction(transaction, userId);
+        // Update user totals (synchronously)
+        _updateUserTotalsInTransaction(transaction, userId, debitItemsSnapshot, newItem: {
+          'recordMoneyValue': recordMoneyValue,
+          'status': status.trim().toLowerCase(),
+        });
       });
 
       log('Added debit item with ID: $docId for user: $userId');
@@ -237,23 +256,31 @@ class FirestoreService {
   }
 
   /// Get debit items with time-based sorting (newest first by default)
-  Future<List<DebitItem>> getDebitItems(String userId, {bool sortByTimeDescending = true}) async {
+  Future<List<DebitItem>> getDebitItems(
+    String userId, {
+    bool sortByTimeDescending = true,
+  }) async {
     try {
       _validateUserId(userId);
 
       Query query = _debitItemsRef(userId);
-      
+
       // Try to order by createdAt, fall back to no ordering if field doesn't exist
       try {
-        query = query.orderBy(_createdAtField, descending: sortByTimeDescending);
+        query = query.orderBy(
+          _createdAtField,
+          descending: sortByTimeDescending,
+        );
       } catch (e) {
-        log('Warning: Could not sort by createdAt field, returning unsorted results');
+        log(
+          'Warning: Could not sort by createdAt field, returning unsorted results',
+        );
         query = _debitItemsRef(userId);
       }
 
       final snapshot = await query.get();
       final items = _mapSnapshotToDebitItems(snapshot);
-      
+
       // If Firestore ordering failed and we need to sort in memory
       // Note: This requires your DebitItem model to have a createdAt field
       // If your model doesn't have createdAt, this section will be skipped
@@ -261,21 +288,10 @@ class FirestoreService {
         try {
           // Only attempt to sort if DebitItem has createdAt field
           // Remove this block if your DebitItem doesn't have createdAt
-          log('Note: In-memory sorting skipped - DebitItem model may not have createdAt field');
-          
-          // Uncomment the following lines if your DebitItem model has createdAt:
-          /*
-          items.sort((a, b) {
-            final aTime = a.createdAt;
-            final bTime = b.createdAt;
-            
-            if (aTime == null && bTime == null) return 0;
-            if (aTime == null) return 1;
-            if (bTime == null) return -1;
-            
-            return sortByTimeDescending ? bTime.compareTo(aTime) : aTime.compareTo(bTime);
-          });
-          */
+          log(
+            'Note: In-memory sorting skipped - DebitItem model may not have createdAt field',
+          );
+
         } catch (e) {
           log('Warning: Could not sort items by time in memory: $e');
         }
@@ -291,15 +307,47 @@ class FirestoreService {
     }
   }
 
+  /// FIXED: Delete debit item with automatic total recalculation
+  Future<void> deleteDebitItem(String userId, String debitItemId) async {
+    try {
+      _validateUserId(userId);
+      _validateDebitItemId(debitItemId);
+
+      await _firestore.runTransaction((transaction) async {
+        // Read debit items first (outside transaction since it's a collection)
+        final debitItemsSnapshot = await _debitItemsRef(userId).get();
+        
+        // Delete the specific item
+        transaction.delete(_debitItemsRef(userId).doc(debitItemId));
+        
+        // Update user totals (synchronously, excluding the deleted item)
+        _updateUserTotalsInTransaction(transaction, userId, debitItemsSnapshot, 
+          excludeItemId: debitItemId);
+      });
+
+      log('Deleted debit item: $debitItemId for user: $userId');
+    } catch (e) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to delete debit item: $e'),
+      );
+    }
+  }
+
   /// Get debit items stream with time-based sorting
-  Stream<List<DebitItem>> getDebitItemsStream(String userId, {bool sortByTimeDescending = true}) {
+  Stream<List<DebitItem>> getDebitItemsStream(
+    String userId, {
+    bool sortByTimeDescending = true,
+  }) {
     try {
       _validateUserId(userId);
 
       Query query = _debitItemsRef(userId);
-      
+
       try {
-        query = query.orderBy(_createdAtField, descending: sortByTimeDescending);
+        query = query.orderBy(
+          _createdAtField,
+          descending: sortByTimeDescending,
+        );
       } catch (e) {
         log('Warning: Could not sort stream by createdAt field');
         query = _debitItemsRef(userId);
@@ -338,7 +386,7 @@ class FirestoreService {
     }
   }
 
-  /// Update debit item with automatic total recalculation
+  /// FIXED: Update debit item with automatic total recalculation
   Future<void> updateDebitItem({
     required String userId,
     required String debitItemId,
@@ -378,11 +426,18 @@ class FirestoreService {
 
       if (updates.isNotEmpty) {
         await _firestore.runTransaction((transaction) async {
+          // Read debit items first (outside transaction since it's a collection)
+          final debitItemsSnapshot = await _debitItemsRef(userId).get();
+          
+          // Update the item
           transaction.update(_debitItemsRef(userId).doc(debitItemId), updates);
-          // Recalculate user totals after update
-          await _updateUserTotalsInTransaction(transaction, userId);
+          
+          // Update user totals (synchronously, with updated values)
+          _updateUserTotalsInTransaction(transaction, userId, debitItemsSnapshot, 
+            updateItemId: debitItemId, 
+            updatedValues: updates);
         });
-        
+
         log('Updated debit item: $debitItemId for user: $userId');
       }
     } catch (e) {
@@ -393,39 +448,27 @@ class FirestoreService {
     }
   }
 
-  /// Delete debit item with automatic total recalculation
-  Future<void> deleteDebitItem(String userId, String debitItemId) async {
-    try {
-      _validateUserId(userId);
-      _validateDebitItemId(debitItemId);
-
-      await _firestore.runTransaction((transaction) async {
-        transaction.delete(_debitItemsRef(userId).doc(debitItemId));
-        // Recalculate user totals after deletion
-        await _updateUserTotalsInTransaction(transaction, userId);
-      });
-      
-      log('Deleted debit item: $debitItemId for user: $userId');
-    } catch (e) {
-      throw FirebaseFailure.fromException(
-        Exception('Failed to delete debit item: $e'),
-      );
-    }
-  }
-
   /// Get debit items by status with time-based sorting
-  Stream<List<DebitItem>> getDebitItemsByStatus(String userId, String status, {bool sortByTimeDescending = true}) {
+  Stream<List<DebitItem>> getDebitItemsByStatus(
+    String userId,
+    String status, {
+    bool sortByTimeDescending = true,
+  }) {
     try {
       _validateUserId(userId);
       if (status.trim().isEmpty) {
         throw ArgumentError('Status cannot be empty');
       }
 
-      Query query = _debitItemsRef(userId)
-          .where(_statusField, isEqualTo: status.trim().toLowerCase());
-      
+      Query query = _debitItemsRef(
+        userId,
+      ).where(_statusField, isEqualTo: status.trim().toLowerCase());
+
       try {
-        query = query.orderBy(_createdAtField, descending: sortByTimeDescending);
+        query = query.orderBy(
+          _createdAtField,
+          descending: sortByTimeDescending,
+        );
       } catch (e) {
         log('Warning: Could not sort by status stream by createdAt field');
       }
@@ -471,9 +514,8 @@ class FirestoreService {
     }
   }
 
-  
   Future<double> getTotalOwnedMoney(String userId) async {
-     try {
+    try {
       _validateUserId(userId);
 
       final ownedItemsSnapshot = await _ownedItemsRef(userId).get();
@@ -492,8 +534,6 @@ class FirestoreService {
         Exception('Failed to get total owned money: $e'),
       );
     }
-
-
   }
 
   /// Get total debit money for all users
@@ -521,12 +561,12 @@ class FirestoreService {
   Future<void> recalculateAllUsersTotals() async {
     try {
       final usersSnapshot = await _usersRef.get();
-      
+
       for (final userDoc in usersSnapshot.docs) {
         final userId = userDoc.id;
         await recalculateUserTotals(userId);
       }
-      
+
       log('Recalculated totals for ${usersSnapshot.docs.length} users');
     } catch (e) {
       throw FirebaseFailure.fromException(
@@ -537,32 +577,87 @@ class FirestoreService {
 
   // ============ HELPER FUNCTIONS ============
 
-  /// Update user totals with better error handling
+  /// FIXED: Update user totals with better error handling
   Future<void> _updateUserTotals(String userId) async {
     await _firestore.runTransaction((transaction) async {
-      await _updateUserTotalsInTransaction(transaction, userId);
+      final debitItemsSnapshot = await _debitItemsRef(userId).get();
+      _updateUserTotalsInTransaction(transaction, userId, debitItemsSnapshot);
     });
   }
 
-  /// Update user totals within a transaction - FEATURE 1: totalDebitMoney calculation
-  Future<void> _updateUserTotalsInTransaction(
+  /// FIXED: Update user totals within a transaction - NO MORE ASYNC/AWAIT
+  void _updateUserTotalsInTransaction(
     Transaction transaction,
     String userId,
-  ) async {
+    QuerySnapshot debitItemsSnapshot, {
+    String? excludeItemId,
+    String? updateItemId,
+    Map<String, dynamic>? updatedValues,
+    Map<String, dynamic>? newItem,
+  }) {
     try {
-      final debitItemsSnapshot = await _debitItemsRef(userId).get();
-      final totals = _calculateTotals(debitItemsSnapshot.docs);
+      // Process the documents with modifications
+      List<Map<String, dynamic>> processedDocs = [];
+      
+      for (final doc in debitItemsSnapshot.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        
+        // Skip if this is the item being deleted
+        if (excludeItemId != null && doc.id == excludeItemId) {
+          continue;
+        }
+        
+        // Update values if this is the item being updated
+        if (updateItemId != null && doc.id == updateItemId && updatedValues != null) {
+          final updatedData = Map<String, dynamic>.from(data);
+          updatedData.addAll(updatedValues);
+          processedDocs.add(updatedData);
+        } else {
+          processedDocs.add(data);
+        }
+      }
+      
+      // Add new item if provided
+      if (newItem != null) {
+        processedDocs.add(newItem);
+      }
+      
+      // Calculate totals from processed documents
+      final totals = _calculateTotalsFromMaps(processedDocs);
 
       transaction.update(_usersRef.doc(userId), {
-        _totalDebitMoneyField: totals.totalMoney, // Sum of all recordMoneyValue
-        _totalMoneyOwedField: totals.totalOwed,   // Sum of owed amounts only
+        _totalDebitMoneyField: totals.totalMoney,
+        _totalMoneyOwedField: totals.totalOwed,
       });
-      
-      log('Updated user totals for $userId: total=${totals.totalMoney}, owed=${totals.totalOwed}');
+
+      log(
+        'Updated user totals for $userId: total=${totals.totalMoney}, owed=${totals.totalOwed}',
+      );
     } catch (e) {
       log('Error updating user totals in transaction: $e');
       rethrow;
     }
+  }
+
+  /// ADDED: Helper method to calculate totals from processed maps
+  ({double totalMoney, double totalOwed}) _calculateTotalsFromMaps(
+    List<Map<String, dynamic>> docs,
+  ) {
+    double totalMoney = 0.0;
+    double totalOwed = 0.0;
+
+    for (final data in docs) {
+      final money = (data[_recordMoneyValueField] ?? 0.0).toDouble();
+      final status = (data[_statusField] ?? '').toString().toLowerCase();
+
+      totalMoney += money;
+
+      if (_owedStatuses.contains(status)) {
+        totalOwed += money;
+      }
+    }
+
+    return (totalMoney: totalMoney, totalOwed: totalOwed);
   }
 
   /// Manually recalculate totals for a specific user
@@ -661,8 +756,8 @@ class FirestoreService {
   ({double totalMoney, double totalOwed}) _calculateTotals(
     List<QueryDocumentSnapshot> docs,
   ) {
-    double totalMoney = 0.0;  // Sum of ALL recordMoneyValue (totalDebitMoney)
-    double totalOwed = 0.0;   // Sum of recordMoneyValue where status is owed
+    double totalMoney = 0.0; // Sum of ALL recordMoneyValue (totalDebitMoney)
+    double totalOwed = 0.0; // Sum of recordMoneyValue where status is owed
 
     for (final doc in docs) {
       final data = doc.data() as Map<String, dynamic>;
@@ -743,7 +838,6 @@ class FirestoreService {
       throw ArgumentError('Status cannot be empty');
     }
   }
-
 }
 
 /// Data class for user statistics

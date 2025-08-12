@@ -5,10 +5,6 @@ sealed class AllUsersState {}
 
 final class AllUsersInitial extends AllUsersState {}
 
-final class ValidateTxtFormFieldSuccess extends AllUsersState {}
-
-final class ValidateTxtFormFieldFailure extends AllUsersState {}
-
 final class GetAllUsersSuccess extends AllUsersState {
   final List<AppUser> users;
   GetAllUsersSuccess({required this.users}) {

@@ -72,4 +72,8 @@ class DeleteUserCubit extends Cubit<DeleteUserState> {
   resetSettings() {
     userIdController.text = "";
   }
+
+   navigateToFirstRouteInStack({required BuildContext context}) {
+    navigateToFirstRouteInStack(context: context);
+  }
 }

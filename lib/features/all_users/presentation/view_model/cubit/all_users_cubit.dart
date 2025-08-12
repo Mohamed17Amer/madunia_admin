@@ -11,58 +11,35 @@ part 'all_users_state.dart';
 class AllUsersCubit extends Cubit<AllUsersState> {
   AllUsersCubit() : super(AllUsersInitial());
 
+  // edit text controllers
   final TextEditingController repairNameController = TextEditingController();
   final TextEditingController repairDescriptionController =
       TextEditingController();
 
+  // form key
   final GlobalKey<FormState> repairScreenKey = GlobalKey<FormState>();
 
+  // firestore instance
   FirestoreService firestoreService = FirestoreService();
 
-  bool checkRequestValidation() {
-    if (repairScreenKey.currentState!.validate()) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  void sendRepairReuest({BuildContext? context}) {
-    if (checkRequestValidation()) {
-      ScaffoldMessenger.of(context!).showSnackBar(
-        const SnackBar(content: Text('تم إرسال طلب الصيانة بنجاح')),
-      );
-    }
-  }
-
-  String? validateTxtFormField({
-    required String? value,
-    required String? errorHint,
-  }) {
-    if (value == null || value.isEmpty) {
-      emit(ValidateTxtFormFieldSuccess());
-
-      return errorHint!;
-    }
-    emit(ValidateTxtFormFieldFailure());
-
-    return null;
-  }
+  /// ********************************* functions ***************************
 
   getAllUsers() async {
     try {
-      final users = await firestoreService. getAllUsers();
+      final users = await firestoreService.getAllUsers();
       emit(GetAllUsersSuccess(users: users));
       return users;
     } on Exception catch (e) {
       emit(GetAllUsersFailure(errmesg: e.toString()));
       return Stream.error(e);
     }
-    
   }
 
-
-   void navigateTo({required BuildContext context, required String path, AppUser? extra}) {
+  void navigateTo({
+    required BuildContext context,
+    required String path,
+    AppUser? extra,
+  }) {
     navigateToWithGoRouter(context: context, path: path, extra: extra);
   }
 }

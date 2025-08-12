@@ -8,7 +8,12 @@ import 'package:madunia_admin/features/debit_report/presentation/view_model/cubi
 
 class DebitReportItem extends StatelessWidget {
   final DebitItem? debitItem;
-  const DebitReportItem( {super.key,this.debitItem});
+  final String userId;
+  const DebitReportItem({
+    super.key,
+    required this.debitItem,
+    required this.userId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,25 +27,36 @@ class DebitReportItem extends StatelessWidget {
               // debit item name
               title: CustomTxt(
                 title: debitItem!.recordName,
-                fontWeight: FontWeight.bold  ,
+                fontWeight: FontWeight.bold,
                 fontColor: AppColors.debitReportItemTitleColor,
               ),
 
               // debit item value
-              subtitle:  CustomTxt(
-                title:"${debitItem!.recordMoneyValue}جنيه مصري",
+              subtitle: CustomTxt(
+                title: "${debitItem!.recordMoneyValue}جنيه مصري",
                 fontWeight: FontWeight.bold,
                 fontColor: AppColors.debitReportItemSubTitleColor,
               ),
 
               // debit item value status
-              leading: CustomIcon(onPressed: () {}, icon: Icons.check),
+              leading: CustomIcon(
+                onPressed: () {
+                  context.read<DebitReportCubit>().deleteDebitItem(
+                    context: context,
+                    debitItemId: debitItem!.id,
+                    userId: userId,
+                  );
+                },
+                icon: Icons.check,
+              ),
 
               // send alert
               trailing: CustomIcon(
                 onPressed: () {
                   context.read<DebitReportCubit>().sendAlarmToUser(
                     context: context,
+                    debitItemId: debitItem!.id,
+                    userId: userId,
                   );
                 },
                 icon: Icons.add_alert_outlined,

@@ -59,6 +59,8 @@ class UsersSliverListItem extends StatelessWidget {
                   onPressed: () {
                     context.read<DebitReportCubit>().sendAlarmToUser(
                       context: context,
+                      debitItemId: user.id,
+                      userId: user.id,
                     );
                   },
                   icon: Icons.add_alert_outlined,

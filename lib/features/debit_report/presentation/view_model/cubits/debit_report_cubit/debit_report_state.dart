@@ -24,6 +24,14 @@ final class AddNewDebitItemSuccess extends DebitReportState {}
 final class AddNewDebitItemFailure extends DebitReportState {}
 final class UpdateDebitItemSuccess extends DebitReportState {}
 final class UpdateDebitItemFailure extends DebitReportState {}
-final class DeleteDebitItemSuccess extends DebitReportState {}
-final class DeleteDebitItemFailure extends DebitReportState {}
+final class DeleteDebitItemSuccess extends DebitReportState {
+
+final String debitItemId;
+  DeleteDebitItemSuccess({required this.debitItemId});
+}
+final class DeleteDebitItemFailure extends DebitReportState {
+
+final String errmesg;
+  DeleteDebitItemFailure({required this.errmesg});
+}
 final class GetAllDebitItemsLoading extends DebitReportState {}

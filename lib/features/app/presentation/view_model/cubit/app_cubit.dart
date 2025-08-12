@@ -11,6 +11,14 @@ class AppCubit extends Cubit<AppState> {
   AppCubit() : super(AppInitial());
 
   static int currentIndex = 0;
+
+  static final List<Widget> pagesViews = [
+    AllUsersScreen(),
+    ManipulateUsersScreen(),
+    AllUsersScreen(),
+    AnimatedInstructionsScreen(),
+  ];
+
   static final List<CustomBottomNavBarItem> bottomNavBarItems = [
     CustomBottomNavBarItem(
       pageIcon: Icons.home_outlined,
@@ -32,13 +40,6 @@ class AppCubit extends Cubit<AppState> {
       pageName: 'Sustainable instructions',
       pageIndex: 3,
     ),
-  ];
-
-  static final List<Widget> pagesViews = [
-    AllUsersScreen(),
-    ManipulateUsersScreen(),
-    AllUsersScreen(),
-    AnimatedInstructionsScreen(),
   ];
 
   void changeBottomNavBarIndex(int index) {
