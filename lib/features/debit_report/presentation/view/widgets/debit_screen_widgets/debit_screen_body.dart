@@ -31,7 +31,7 @@ class DebitScreenBody extends StatelessWidget {
     );
   }
 
-  _drawHeader() {
+  List<Widget> _drawHeader() {
     return <Widget>[
       // safe area
       SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 5))),
@@ -54,32 +54,24 @@ class DebitScreenBody extends StatelessWidget {
     ];
   }
 
-  _drawBody(BuildContext context, DebitReportState state) {
+  Widget _drawBody(BuildContext context, DebitReportState state) {
     if (state is GetAllDebitItemsSuccess) {
-      [
-        if (state.allUserItemDebits.isEmpty) ...[
-          SliverFillRemaining(
-            child: Center(child: CustomTxt(title: "لم تتم إضافة عناصر بعد.")),
-          ),
-        ] else
-          {
-            [
-              // debit items list
-              DebitSliverList(
-                allUserItemDebits: state.allUserItemDebits,
-                userId: user.id,
-              ),
-            ],
-          },
-      ];
+      if (state.allUserItemDebits.isEmpty) {
+        return SliverFillRemaining(
+          child: Center(child: CustomTxt(title: "لم تتم إضافة عناصر بعد.")),
+        );
+      } else {
+        return DebitSliverList(
+          allUserItemDebits: state.allUserItemDebits,
+          userId: user.id,
+        );
+      }
     } else if (state is GetAllDebitItemsFailure) {
-      return [SliverFillRemaining(child: Center(child: Text(state.errmesg)))];
+      return SliverFillRemaining(child: Center(child: Text(state.errmesg)));
     } else {
-      return [
-        const SliverFillRemaining(
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      ];
+      return const SliverFillRemaining(
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
   }
 }

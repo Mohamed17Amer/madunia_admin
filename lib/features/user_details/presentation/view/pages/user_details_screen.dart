@@ -26,7 +26,9 @@ class UserDetailsScreen extends StatelessWidget {
               // Dynamic content
               BlocBuilder<UserDetailsCubit, UserDetailsState>(
                 builder: (context, state) {
-                  return _drawBody(context, state);
+                  return SliverList(
+                    delegate: SliverChildListDelegate(_drawBody(context, state)),
+                  );
                 },
               ),
             ],
@@ -36,7 +38,7 @@ class UserDetailsScreen extends StatelessWidget {
     );
   }
 
-  _drawHeader() {
+  List<Widget> _drawHeader() {
     return <Widget>[
       SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 20))),
 
@@ -46,25 +48,20 @@ class UserDetailsScreen extends StatelessWidget {
     ];
   }
 
-  _drawBody(BuildContext context, UserDetailsState state) {
+  List<Widget> _drawBody(BuildContext context, UserDetailsState state) {
     // Grid view section
     if (state is GetTotalMoneySuccess) {
       return [
-        SliverToBoxAdapter(
-          child: UserPaymentDetailsCardsGridView(
-            user: user,
-            totals: state.total,
-          ),
+        UserPaymentDetailsCardsGridView(
+          user: user,
+          totals: state.total,
         ),
-        SliverToBoxAdapter(child: SizedBox(height: 5)),
-
-        SliverToBoxAdapter(child: UserOtherDetailsCardsGridView(user: user)),
+        SizedBox(height: 5),
+        UserOtherDetailsCardsGridView(user: user),
       ];
     } else {
       return [
-        const SliverFillRemaining(
-          child: Center(child: CircularProgressIndicator()),
-        ),
+        const Center(child: CircularProgressIndicator()),
       ];
     }
   }

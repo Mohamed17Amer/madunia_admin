@@ -39,7 +39,7 @@ class AllUsersScreen extends StatelessWidget {
     ];
   }
 
-  _drawBody(BuildContext context, AllUsersState state) {
+  Widget _drawBody(BuildContext context, AllUsersState state) {
     // success
     if (state is GetAllUsersSuccess) {
       // empty list
