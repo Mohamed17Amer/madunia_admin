@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/utils/router/app_screens.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_buttom.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
-import 'package:madunia_admin/features/manipulate_users/presentation/view_model/cubits/manipulate_users_cubit/manipulate_users_cubit.dart';
+import 'package:madunia_admin/features/app/presentation/view_model/cubit/app_cubit.dart';
 
 class AllAdminPrivilegesButtons extends StatelessWidget {
   const AllAdminPrivilegesButtons({super.key});
@@ -16,7 +16,7 @@ class AllAdminPrivilegesButtons extends StatelessWidget {
       children: [
         CustomButtom(
           onPressed: () {
-            context.read<ManipulateUsersCubit>().navigateTo(
+            context.read<AppCubit>().navigateTo(
               context: context,
               path: AppScreens.addNewUserScreen,
             );
@@ -29,7 +29,7 @@ class AllAdminPrivilegesButtons extends StatelessWidget {
 
         CustomButtom(
           onPressed: () {
-            context.read<ManipulateUsersCubit>().navigateTo(
+            context.read<AppCubit>().navigateTo(
               context: context,
               path: AppScreens.deleteUserScreen,
             );

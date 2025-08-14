@@ -7,7 +7,5 @@ part 'manipulate_users_state.dart';
 class ManipulateUsersCubit extends Cubit<ManipulateUsersState> {
   ManipulateUsersCubit() : super(ManipulateUsersInitial());
 
-  void navigateTo({required BuildContext context, required String path}) {
-    navigateToWithGoRouter(context: context, path: path);
-  }
+ 
 }

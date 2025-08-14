@@ -14,60 +14,72 @@ class DebitScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<DebitReportCubit, DebitReportState>(
-      listener: (context, state) {
-        if (state is! GetAllDebitItemsSuccess) {
-          context.read<DebitReportCubit>().getAllDebitItems(userId: user.id);
-        }
-      },
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: CustomScrollView(
+        slivers: [
+          ..._drawHeader(),
 
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CustomScrollView(
-            slivers: [
-              // safe area
-              SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 5))),
-
-              // app bar
-              SliverToBoxAdapter(
-                child: CustomAppBar(title: "كشف المديونية المستحقة عليه"),
-              ),
-              SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-              // add new debit item button
-              SliverToBoxAdapter(child: AddNewDebitItemButton(user: user)),
-              SliverToBoxAdapter(child: SizedBox(height: 10)),
-              SliverToBoxAdapter(
-                child: Divider(
-                  thickness: 2.00,
-                  color: AppColors.bottomNavBarSelectedItemColor,
-                ),
-              ),
-
-              if (state is GetAllDebitItemsSuccess) ...[
-                if (state.allUserItemDebits.isEmpty) ...[
-                  SliverFillRemaining(
-                    child: Center(
-                      child:  CustomTxt(title: "لم تتم إضافة عناصر بعد.")
-                    )
-
-                  ),
-                ] else ...[
-                  // debit items list
-                  DebitSliverList(allUserItemDebits: state.allUserItemDebits, userId: user.id),
-                ],
-              ] else if (state is GetAllDebitItemsFailure) ...[
-                SliverFillRemaining(child: Center(child: Text(state.errmesg))),
-              ] else ...[
-                const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ],
-            ],
+          BlocConsumer<DebitReportCubit, DebitReportState>(
+            listener: (context, state) {},
+            builder: (BuildContext context, DebitReportState state) {
+              return _drawBody(context, state);
+            },
           ),
-        );
-      },
+        ],
+      ),
     );
+  }
+
+  _drawHeader() {
+    return <Widget>[
+      // safe area
+      SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 5))),
+
+      // app bar
+      SliverToBoxAdapter(
+        child: CustomAppBar(title: "كشف المديونية المستحقة عليه"),
+      ),
+      SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+      // add new debit item button
+      SliverToBoxAdapter(child: AddNewDebitItemButton(user: user)),
+      SliverToBoxAdapter(child: SizedBox(height: 10)),
+      SliverToBoxAdapter(
+        child: Divider(
+          thickness: 2.00,
+          color: AppColors.bottomNavBarSelectedItemColor,
+        ),
+      ),
+    ];
+  }
+
+  _drawBody(BuildContext context, DebitReportState state) {
+    if (state is GetAllDebitItemsSuccess) {
+      [
+        if (state.allUserItemDebits.isEmpty) ...[
+          SliverFillRemaining(
+            child: Center(child: CustomTxt(title: "لم تتم إضافة عناصر بعد.")),
+          ),
+        ] else
+          {
+            [
+              // debit items list
+              DebitSliverList(
+                allUserItemDebits: state.allUserItemDebits,
+                userId: user.id,
+              ),
+            ],
+          },
+      ];
+    } else if (state is GetAllDebitItemsFailure) {
+      return [SliverFillRemaining(child: Center(child: Text(state.errmesg)))];
+    } else {
+      return [
+        const SliverFillRemaining(
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      ];
+    }
   }
 }

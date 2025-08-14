@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/features/all_users/presentation/view/pages/all_users_screen.dart';
 import 'package:madunia_admin/features/app/presentation/view/widgets/custom_bottom_nav_bar_item.dart';
 import 'package:madunia_admin/features/instructions/presentation/view/pages/annimated_instructions_screen.dart';
@@ -45,5 +46,9 @@ class AppCubit extends Cubit<AppState> {
   void changeBottomNavBarIndex(int index) {
     currentIndex = index;
     emit(AppChangeBottomNavBarState(index));
+  }
+
+  void navigateTo({required BuildContext context, required String path}) {
+    navigateToWithGoRouter(context: context, path: path);
   }
 }
