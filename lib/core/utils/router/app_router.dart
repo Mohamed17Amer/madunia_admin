@@ -14,6 +14,25 @@ import 'package:madunia_admin/features/instructions/presentation/view/pages/anni
 abstract class AppRouter {
   static final router = GoRouter(
     routes: [
+      // starting screen
+      GoRoute(
+        path: AppScreens.startingScreen,
+        builder: (context, state) {
+          return StartingScreen();
+        },
+      ),
+
+      /// ********************************************************************************************
+
+      // all users screen
+      GoRoute(
+        path: AppScreens.allUsersScreen,
+        builder: (context, state) {
+          return AllUsersScreen();
+        },
+      ),
+
+      // user details
       GoRoute(
         path: AppScreens.userDetailsScreen,
 
@@ -24,20 +43,7 @@ abstract class AppRouter {
         },
       ),
 
-      GoRoute(
-        path: AppScreens.startingScreen,
-        builder: (context, state) {
-          return StartingScreen();
-        },
-      ),
-
-      GoRoute(
-        path: AppScreens.allUsersScreen,
-        builder: (context, state) {
-          return AllUsersScreen();
-        },
-      ),
-
+      // debit items screen
       GoRoute(
         path: AppScreens.debitScreen,
         builder: (context, state) {
@@ -47,13 +53,7 @@ abstract class AppRouter {
         },
       ),
 
-      GoRoute(
-        path: AppScreens.animatedInstructionsScreen,
-        builder: (context, state) {
-          return AnimatedInstructionsScreen();
-        },
-      ),
-
+      // add new debit item
       GoRoute(
         path: AppScreens.addNewDebitItemScreen,
         builder: (context, state) {
@@ -62,6 +62,9 @@ abstract class AppRouter {
         },
       ),
 
+      /// ********************************************************************************************
+
+      // admin screen
       GoRoute(
         path: AppScreens.manipulateUsersScreen,
         builder: (context, state) {
@@ -69,6 +72,7 @@ abstract class AppRouter {
         },
       ),
 
+      // add user screen
       GoRoute(
         path: AppScreens.addNewUserScreen,
         builder: (context, state) {
@@ -76,10 +80,21 @@ abstract class AppRouter {
         },
       ),
 
+      // delete user screen
       GoRoute(
         path: AppScreens.deleteUserScreen,
         builder: (context, state) {
           return DeleteUserScreen();
+        },
+      ),
+
+      /// ********************************************************************************************
+
+      // instructions screen
+      GoRoute(
+        path: AppScreens.animatedInstructionsScreen,
+        builder: (context, state) {
+          return AnimatedInstructionsScreen();
         },
       ),
     ],

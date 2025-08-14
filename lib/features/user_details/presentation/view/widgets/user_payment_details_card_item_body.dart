@@ -36,7 +36,7 @@ class UserPaymentDetailsCardItemBody extends StatelessWidget {
         Align(
           alignment: Alignment.topLeft,
           child: CustomTxt(
-            title: "${total} جنيه مصري ",
+            title: "$total جنيه مصري ",
             fontWeight: FontWeight.bold,
           ),
         ),

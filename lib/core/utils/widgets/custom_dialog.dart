@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/helper/helper_funcs.dart';
-import 'package:madunia_admin/core/utils/router/app_screens.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/features/manipulate_users/presentation/view_model/cubits/delete_user_cubit/delete_user_cubit.dart';
-import 'package:madunia_admin/features/user_details/presentation/view_model/cubit/user_details_cubit.dart';
 
 class CustomDialog {
   final BuildContext context;
