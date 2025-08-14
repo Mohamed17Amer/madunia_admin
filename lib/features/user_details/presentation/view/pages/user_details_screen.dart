@@ -15,49 +15,57 @@ class UserDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => UserDetailsCubit()..getTotalMoney(userId: user!.id),
-      child: BlocBuilder<UserDetailsCubit, UserDetailsState>(
-        builder: (context, state) {
-          return CustomScaffold(
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomScrollView(
-                slivers: [
-                  // Top safe area spacing
-                  SliverToBoxAdapter(
-                    child: SafeArea(child: SizedBox(height: 20)),
-                  ),
+      child: CustomScaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CustomScrollView(
+            slivers: [
+              // static headers
+              ..._drawHeader(),
 
-                  // Profile section
-                  SliverToBoxAdapter(
-                    child: UserDetailsProfileSection(user: user),
-                  ),
-                  SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-                  // Grid view section
-                  if (state is GetTotalMoneySuccess) ...[
-                    SliverToBoxAdapter(
-                      child: UserPaymentDetailsCardsGridView(
-                        user: user,
-                        totals: state.total,
-                      ),
-                    ),
-                    SliverToBoxAdapter(child: SizedBox(height: 5)),
-
-                    SliverToBoxAdapter(
-                      child: UserOtherDetailsCardsGridView(user: user),
-                    ),
-                  ]
-                  else ...[
-                    const SliverFillRemaining(
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
-                  ]
-                ],
+              // Dynamic content
+              BlocBuilder<UserDetailsCubit, UserDetailsState>(
+                builder: (context, state) {
+                  return _drawBody(context, state);
+                },
               ),
-            ),
-          );
-        },
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  _drawHeader() {
+    return <Widget>[
+      SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 20))),
+
+      // Profile section
+      SliverToBoxAdapter(child: UserDetailsProfileSection(user: user)),
+      SliverToBoxAdapter(child: SizedBox(height: 20)),
+    ];
+  }
+
+  _drawBody(BuildContext context, UserDetailsState state) {
+    // Grid view section
+    if (state is GetTotalMoneySuccess) {
+      return [
+        SliverToBoxAdapter(
+          child: UserPaymentDetailsCardsGridView(
+            user: user,
+            totals: state.total,
+          ),
+        ),
+        SliverToBoxAdapter(child: SizedBox(height: 5)),
+
+        SliverToBoxAdapter(child: UserOtherDetailsCardsGridView(user: user)),
+      ];
+    } else {
+      return [
+        const SliverFillRemaining(
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      ];
+    }
   }
 }
