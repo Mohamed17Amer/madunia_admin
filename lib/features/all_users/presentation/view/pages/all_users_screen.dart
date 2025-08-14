@@ -12,42 +12,58 @@ class AllUsersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AllUsersCubit()..getAllUsers(),
-      child: BlocBuilder<AllUsersCubit, AllUsersState>(
-        builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CustomScrollView(
-              slivers: [
-                // safe area
-                SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 5))),
-                // title
-                SliverToBoxAdapter(child: CustomAppBar(title: "جميع الأعضاء")),
-                SliverToBoxAdapter(child: SizedBox(height: 20)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CustomScrollView(
+          slivers: [
+            // Static headers - won't rebuild when state changes
+            ..._drawHeader(),
 
-                if (state is GetAllUsersSuccess) ...[
-                  if (state.users.isEmpty) ...[
-                    const SliverFillRemaining(
-                      child: Center(
-                        child: CustomTxt(title: "No users added yet"),
-                      ),
-                    ),
-                  ] else ...[
-                    AllUsersSliverList(users: state.users),
-                  ],
-                ] else if (state is GetAllUsersFailure) ...[
-                  SliverFillRemaining(
-                    child: Center(child: CustomTxt(title: state.errmesg)),
-                  ),
-                ] else ...[
-                  const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                ],
-              ],
+            // Dynamic content - only this part rebuilds
+            BlocBuilder<AllUsersCubit, AllUsersState>(
+              builder: (context, state) {
+                return _drawBody(context, state);
+              },
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
+  }
+
+  List<Widget> _drawHeader() {
+    return <Widget>[
+      SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 5))),
+      SliverToBoxAdapter(child: CustomAppBar(title: "جميع الأعضاء")),
+      SliverToBoxAdapter(child: SizedBox(height: 20)),
+    ];
+  }
+
+  _drawBody(BuildContext context, AllUsersState state) {
+    // success
+    if (state is GetAllUsersSuccess) {
+      // empty list
+      if (state.users.isEmpty) {
+        return const SliverFillRemaining(
+          child: Center(child: CustomTxt(title: "No users added yet")),
+        );
+      }
+      // not empty list
+      else {
+        return AllUsersSliverList(users: state.users);
+      }
+    }
+    // failure
+    else if (state is GetAllUsersFailure) {
+      return SliverFillRemaining(
+        child: Center(child: CustomTxt(title: state.errmesg)),
+      );
+    }
+    // loading
+    else {
+      return const SliverFillRemaining(
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
   }
 }
