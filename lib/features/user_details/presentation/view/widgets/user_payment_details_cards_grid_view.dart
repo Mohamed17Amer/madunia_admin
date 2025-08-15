@@ -26,6 +26,7 @@ class UserPaymentDetailsCardsGridView extends StatelessWidget {
                 context: context,
                 path: AppScreens.debitScreen,
                 extra: user,
+
               );
             }
           },

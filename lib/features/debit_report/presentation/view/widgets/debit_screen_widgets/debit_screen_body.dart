@@ -21,7 +21,13 @@ class DebitScreenBody extends StatelessWidget {
           ..._drawHeader(),
 
           BlocConsumer<DebitReportCubit, DebitReportState>(
-            listener: (context, state) {},
+            listener: (context, state) {
+              if (state is DeleteDebitItemSuccess) {
+                context.read<DebitReportCubit>().getAllDebitItems(
+                  userId: user.id,
+                );
+              }
+            },
             builder: (BuildContext context, DebitReportState state) {
               return _drawBody(context, state);
             },

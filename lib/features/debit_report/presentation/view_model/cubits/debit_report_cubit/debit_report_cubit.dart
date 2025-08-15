@@ -40,22 +40,11 @@ class DebitReportCubit extends Cubit<DebitReportState> {
       await firestoreService.deleteDebitItem(userId, debitItemId);
       showToastification(context: context, message: "تم حذف العنصر");
       emit(DeleteDebitItemSuccess(debitItemId: debitItemId));
+      eventBus.fire(UserDataUpdatedEvent(userId));
     } catch (e) {
       showToastification(context: context, message: "لم يتم حذف العنصر");
       emit(DeleteDebitItemFailure(errmesg: e.toString()));
     }
-  }
-
-  ///************************************* HELPERS **************************************** */
-
-  sendAlarmToUser({
-    required BuildContext context,
-    required String debitItemId,
-    required String userId,
-  }) {
-    showToastification(context: context, message: "تم إرسال تنبيه للدفع");
-
-    // emit(SendAlarmToUserSuccess());
   }
 
   ///************************************ VALIDATION **********************************
@@ -119,6 +108,18 @@ class DebitReportCubit extends Cubit<DebitReportState> {
         );
       }
     }
+  }
+
+  ///************************************* HELPERS **************************************** */
+
+  sendAlarmToUser({
+    required BuildContext context,
+    required String debitItemId,
+    required String userId,
+  }) {
+    showToastification(context: context, message: "تم إرسال تنبيه للدفع");
+
+    // emit(SendAlarmToUserSuccess());
   }
 
   @override

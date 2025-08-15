@@ -14,14 +14,9 @@ class UserDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) =>
-              UserDetailsCubit()..getTotalMoney(userId: user!.id),
-        ),
-        // BlocProvider(create: (context) => ManipulateUsersCubit()),
-      ],
+    return BlocProvider(
+      create: (context) => UserDetailsCubit()..getTotalMoney(userId: user!.id),
+
       child: CustomScaffold(
         body: Padding(
           padding: const EdgeInsets.all(8.0),

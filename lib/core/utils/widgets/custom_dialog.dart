@@ -18,61 +18,65 @@ class CustomDialog {
   }) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
 
-          child: AnimatedContainer(
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            decoration: BoxDecoration(
-              color: generateRandomColor(),
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-          
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CustomTxt(
-                    title: 'متأكد من حذف هذا العضو ؟',
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  SizedBox(height: 15),
-                  Wrap(
-                    children: [
-                      CustomTxt(
-                        title: '''
-            سيتم حذفه بشكلِ كامل، 
-            ولن تستطيع استعادة بياناته''',
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await context.read<ManipulateUsersCubit>().deleteUser(
-                        context: context,
-                        id: userId,
-                      );
-                        navigateToFirstRouteInStack(context: context);
-                    },
-                    child: CustomTxt(title: 'تأكيد'),
+          child: BlocProvider(
+            create: (context) => ManipulateUsersCubit(),
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              decoration: BoxDecoration(
+                color: generateRandomColor(),
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    spreadRadius: 2,
                   ),
                 ],
+              ),
+            
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomTxt(
+                      title: 'متأكد من حذف هذا العضو ؟',
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    SizedBox(height: 15),
+                    Wrap(
+                      children: [
+                        CustomTxt(
+                          title: '''
+              سيتم حذفه بشكلِ كامل، 
+              ولن تستطيع استعادة بياناته''',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await context.read<ManipulateUsersCubit>().deleteUser(
+                          context: context,
+                          id: userId,
+                        );
+            
+                          navigateToFirstRouteInStack(context: dialogContext);
+                      },
+                      child: CustomTxt(title: 'تأكيد'),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

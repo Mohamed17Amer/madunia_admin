@@ -111,9 +111,9 @@ class ManipulateUsersCubit extends Cubit<ManipulateUsersState> {
     if (id != null) {
       userId = id;
       await firestoreService.deleteUser(userId);
-      fireEvent(DeleteUserEvent());
+    //  fireEvent(DeleteUserEvent());
 
-    //  showToastification(context: context!, message: "تم حذف العضو بنجاح");
+      showToastification(context: context!, message: "تم حذف العضو بنجاح");
 
       emit(DeleteUserSuccess(userId: userId));
     } else {
@@ -126,7 +126,7 @@ class ManipulateUsersCubit extends Cubit<ManipulateUsersState> {
 
         ScaffoldMessenger.of(
           context!,
-        ).showSnackBar(const SnackBar(content: Text('تمت   حذف العضو بنجاح')));
+        ).showSnackBar(const SnackBar(content: Text('تم   حذف العضو بنجاح')));
 
         emit(DeleteUserSuccess(userId: userId));
       } else {
