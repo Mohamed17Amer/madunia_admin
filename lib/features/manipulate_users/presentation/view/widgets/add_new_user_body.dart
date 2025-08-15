@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_app_bar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_buttom.dart';
@@ -55,6 +56,12 @@ class AddNewUserBody extends StatelessWidget {
                 hintText: "الرجاء إدخال رقم التليفون",
                 maxLines: 1,
                 keyboardType: TextInputType.phone,
+             inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+
+                  //    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      LengthLimitingTextInputFormatter(11), // Max 11 digits
+                ],
                 validator: (value) {
                   return context.read<AddUserCubit>().validateTxtFormField(
                     value: value,

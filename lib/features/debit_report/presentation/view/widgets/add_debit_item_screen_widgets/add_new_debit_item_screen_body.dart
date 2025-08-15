@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/utils/events/event_bus.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_app_bar.dart';
@@ -6,7 +7,7 @@ import 'package:madunia_admin/core/utils/widgets/custom_buttom.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt_form_field.dart';
 import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
-import 'package:madunia_admin/features/debit_report/presentation/view_model/cubits/add_new_debit_item_cubit/add_debit_item_cubit.dart';
+import 'package:madunia_admin/features/debit_report/presentation/view_model/cubits/debit_report_cubit/debit_report_cubit.dart';
 
 class AddNewDebitItemScreenBody extends StatelessWidget {
   final AppUser user;
@@ -17,7 +18,7 @@ class AddNewDebitItemScreenBody extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Form(
-        key: context.read<AddDebitItemCubit>().addDebitItemScreenKey,
+        key: context.read<DebitReportCubit>().addDebitItemScreenKey,
         child: Column(
           children: [
             SafeArea(child: SizedBox(height: 5)),
@@ -31,13 +32,13 @@ class AddNewDebitItemScreenBody extends StatelessWidget {
                 hintText: "الرجاء إدخال اسم البيان",
                 maxLines: 1,
                 validator: (value) {
-                  return context.read<AddDebitItemCubit>().validateTxtFormField(
+                  return context.read<DebitReportCubit>().validateTxtFormField(
                     value: value,
                     errorHint: "الرجاء إدخال اسم البيان",
                   );
                 },
                 controller: context
-                    .read<AddDebitItemCubit>()
+                    .read<DebitReportCubit>()
                     .debitItemNameController,
               ),
             ),
@@ -45,15 +46,21 @@ class AddNewDebitItemScreenBody extends StatelessWidget {
               flex: 1,
               child: CustomTxtFormField(
                 controller: context
-                    .read<AddDebitItemCubit>()
+                    .read<DebitReportCubit>()
                     .debitItemValueController,
                 labelText: "القيمة بالجنيه",
                 hintText: "الرجاء إدخال القيمة بالجنيه",
                 maxLines: 1,
                 keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+
+                  //    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                       LengthLimitingTextInputFormatter(4), // Max 4 digits
+                ],
 
                 validator: (value) {
-                  return context.read<AddDebitItemCubit>().validateTxtFormField(
+                  return context.read<DebitReportCubit>().validateTxtFormField(
                     value: value,
                     errorHint: "الرجاء إدخال القيمة بالجنيه",
                   );
@@ -68,11 +75,11 @@ class AddNewDebitItemScreenBody extends StatelessWidget {
                   fontColor: Colors.white,
                 ),
                 onPressed: () {
-                  context.read<AddDebitItemCubit>().addNewDebitItem(
+                  context.read<DebitReportCubit>().addNewDebitItem(
                     context: context,
                     user: user,
                   );
-                  eventBus.fire(UserDataUpdatedEvent(user.id));
+                  // eventBus.fire(UserDataUpdatedEvent(user.id));
                   Navigator.pop(context);
                 },
               ),

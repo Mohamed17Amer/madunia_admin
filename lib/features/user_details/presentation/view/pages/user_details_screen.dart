@@ -18,41 +18,44 @@ class UserDetailsScreen extends StatefulWidget {
 }
 
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
-  late StreamSubscription _sub;
-
-  @override
-  void initState() {
-    super.initState();
-    _sub = eventBus.on<UserDataUpdatedEvent>().listen((event) {
-      if (event.userId == widget.user!.id) {
-        context.read<UserDetailsCubit>().getTotalMoney(userId: widget.user!.id);
-      }
-    });
-  }
+  StreamSubscription? _sub;
+  late final UserDetailsCubit _cubit; // ✅ store cubit reference
 
   @override
   void dispose() {
-    _sub.cancel();
+    // Cancel listener before widget tree is gone
+    _sub?.cancel();
     super.dispose();
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => UserDetailsCubit()..getTotalMoney(userId:widget. user!.id),
+      create: (_) {
+        _cubit = UserDetailsCubit()
+          ..getTotalMoney(userId: widget.user!.id);
+
+        // Subscribe without using `context` inside the callback
+        _sub = eventBus.on<UserDataUpdatedEvent>().listen((event) {
+          if (event.userId == widget.user!.id) {
+            _cubit.getTotalMoney(userId: widget.user!.id);
+          }
+        });
+
+        return _cubit;
+      },
       child: CustomScaffold(
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CustomScrollView(
             slivers: [
-              // static headers
               ..._drawHeader(),
-
-              // Dynamic content
               BlocBuilder<UserDetailsCubit, UserDetailsState>(
                 builder: (context, state) {
                   return SliverList(
-                    delegate: SliverChildListDelegate(_drawBody(context, state)),
+                    delegate: SliverChildListDelegate(
+                      _drawBody(state),
+                    ),
                   );
                 },
               ),
@@ -66,23 +69,22 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   List<Widget> _drawHeader() {
     return <Widget>[
       SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 20))),
-
-      // Profile section
-      SliverToBoxAdapter(child: UserDetailsProfileSection(user: widget. user)),
+      SliverToBoxAdapter(
+        child: UserDetailsProfileSection(user: widget.user),
+      ),
       SliverToBoxAdapter(child: SizedBox(height: 20)),
     ];
   }
 
-  List<Widget> _drawBody(BuildContext context, UserDetailsState state) {
-    // Grid view section
+  List<Widget> _drawBody(UserDetailsState state) {
     if (state is GetTotalMoneySuccess) {
       return [
         UserPaymentDetailsCardsGridView(
-          user: widget. user,
+          user: widget.user,
           totals: state.total,
         ),
         SizedBox(height: 5),
-        UserOtherDetailsCardsGridView(user: widget. user),
+        UserOtherDetailsCardsGridView(user: widget.user),
       ];
     } else {
       return [

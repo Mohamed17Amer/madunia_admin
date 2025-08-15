@@ -22,7 +22,7 @@ class AllUsersScreen extends StatelessWidget {
             // Dynamic content - only this part rebuilds
             BlocBuilder<AllUsersCubit, AllUsersState>(
               builder: (context, state) {
-                return _drawBody(context, state);
+                return DebitReportCubit(context, state);
               },
             ),
           ],
@@ -39,7 +39,7 @@ class AllUsersScreen extends StatelessWidget {
     ];
   }
 
-  Widget _drawBody(BuildContext context, AllUsersState state) {
+  Widget DebitReportCubit(BuildContext context, AllUsersState state) {
     // success
     if (state is GetAllUsersSuccess) {
       // empty list

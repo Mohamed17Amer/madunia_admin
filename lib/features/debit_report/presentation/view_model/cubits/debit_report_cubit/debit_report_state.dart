@@ -45,3 +45,38 @@ final class DeleteDebitItemFailure extends DebitReportState {
   @override
   List<Object?> get props => [errmesg];
 }
+
+
+
+///**************************************** */
+///
+
+final class ValidateTxtFormFieldSuccess extends DebitReportState {
+  const ValidateTxtFormFieldSuccess();
+}
+
+final class ValidateTxtFormFieldFailure extends DebitReportState {
+  const ValidateTxtFormFieldFailure();
+}
+
+final class AddNewDebitItemSuccess extends DebitReportState {
+  final dynamic debitItem; // type left dynamic because original was untyped
+   AddNewDebitItemSuccess({this.debitItem}) {
+    log("new debit item added $debitItem");
+  }
+
+  @override
+  List<Object?> get props => [debitItem];
+}
+
+final class AddNewDebitItemLoading extends DebitReportState {
+  const AddNewDebitItemLoading();
+}
+
+final class AddNewDebitItemFailure extends DebitReportState {
+  final String errmesg;
+  const AddNewDebitItemFailure({required this.errmesg});
+
+  @override
+  List<Object?> get props => [errmesg];
+}
