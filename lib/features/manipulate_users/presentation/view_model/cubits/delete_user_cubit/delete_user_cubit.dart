@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:madunia_admin/core/services/firebase_sevices.dart';
 
@@ -32,7 +33,7 @@ class DeleteUserCubit extends Cubit<DeleteUserState> {
         context!,
       ).showSnackBar(const SnackBar(content: Text('تمت   حذف العضو بنجاح')));
 
-      emit(deleteUserSuccess(userId: userId));
+      emit(DeleteUserSuccess(userId: userId));
     } else {
       userId = userIdController.text;
 
@@ -43,7 +44,7 @@ class DeleteUserCubit extends Cubit<DeleteUserState> {
           context!,
         ).showSnackBar(const SnackBar(content: Text('تمت   حذف العضو بنجاح')));
 
-        emit(deleteUserSuccess(userId: userId));
+        emit(DeleteUserSuccess(userId: userId));
       } else {
         ScaffoldMessenger.of(context!).showSnackBar(
           const SnackBar(

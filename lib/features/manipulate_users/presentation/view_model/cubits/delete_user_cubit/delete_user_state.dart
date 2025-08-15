@@ -1,26 +1,41 @@
 part of 'delete_user_cubit.dart';
 
 @immutable
-sealed class DeleteUserState {}
+abstract class DeleteUserState extends Equatable {
+  const DeleteUserState();
 
-final class DeleteUserInitial extends DeleteUserState {}
+  @override
+  List<Object?> get props => [];
+}
 
-final class ValidateTxtFormFieldSuccess extends DeleteUserState {}
+final class DeleteUserInitial extends DeleteUserState {
+  const DeleteUserInitial();
+}
 
-final class ValidateTxtFormFieldFailure extends DeleteUserState {}
+final class ValidateTxtFormFieldSuccess extends DeleteUserState {
+  const ValidateTxtFormFieldSuccess();
+}
 
+final class ValidateTxtFormFieldFailure extends DeleteUserState {
+  const ValidateTxtFormFieldFailure();
+}
 
-
-final class deleteUserSuccess extends DeleteUserState {
+final class DeleteUserSuccess extends DeleteUserState {
   final String? userId;
-  deleteUserSuccess({this.userId}) {
-    log("Delete  user success $userId ");
+   DeleteUserSuccess({this.userId}) {
+    log("Delete user success $userId ");
   }
+
+  @override
+  List<Object?> get props => [userId];
 }
 
 final class DeleteUserFailure extends DeleteUserState {
   final String? userId;
-  DeleteUserFailure({  this.userId}) {
-    log("Delete  user failure $userId ");
+   DeleteUserFailure({this.userId}) {
+    log("Delete user failure $userId ");
   }
+
+  @override
+  List<Object?> get props => [userId];
 }

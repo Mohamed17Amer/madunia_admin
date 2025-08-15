@@ -1,6 +1,13 @@
 part of 'manipulate_users_cubit.dart';
 
 @immutable
-sealed class ManipulateUsersState {}
+abstract class ManipulateUsersState extends Equatable {
+  const ManipulateUsersState();
 
-final class ManipulateUsersInitial extends ManipulateUsersState {}
+  @override
+  List<Object?> get props => [];
+}
+
+final class ManipulateUsersInitial extends ManipulateUsersState {
+  const ManipulateUsersInitial();
+}
