@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_circle_avatar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_dialog.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_icon.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
-import 'package:madunia_admin/features/user_details/presentation/view_model/cubit/user_details_cubit.dart';
 
 class UserDetailsProfileSection extends StatelessWidget {
   final AppUser? user;
@@ -64,12 +62,7 @@ class UserDetailsProfileSection extends StatelessWidget {
                 icon: Icons.remove_circle_outline_rounded,
                 onPressed: () {
                   CustomDialog(context: context, userId: user!.id);
-                  /*
-                  context.read<ManipulateUsersCubit>().deleteUser(
-                    context: context,
-                    id: user!.id,
-                  );
-                  */
+
                 },
               ),
             ],

@@ -1,6 +1,8 @@
 part of 'manipulate_users_cubit.dart';
 
 @immutable
+
+///**************************** INITIALS **************************** */
 abstract class ManipulateUsersState extends Equatable {
   const ManipulateUsersState();
 
@@ -12,7 +14,7 @@ final class ManipulateUsersInitial extends ManipulateUsersState {
   const ManipulateUsersInitial();
 }
 
-/// *************************** ADD ********************
+/// *************************** VALIDATION ********************
 final class ValidateTxtFormFieldSuccess extends ManipulateUsersState {
     const ValidateTxtFormFieldSuccess();
 }
@@ -30,6 +32,9 @@ final class GenerateNewUserUniqueNameSuccess extends ManipulateUsersState {
   @override
   List<Object?> get props => [uniqueName];
 }
+
+
+/// *************************** ADD ********************
 
 final class AddNewUserSuccess extends ManipulateUsersState {
   final String? uniqueName;

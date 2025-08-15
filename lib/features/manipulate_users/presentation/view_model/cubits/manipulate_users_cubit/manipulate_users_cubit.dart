@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/services/firebase_sevices.dart';
+import 'package:madunia_admin/core/utils/events/event_bus.dart';
 
 part 'manipulate_users_state.dart';
 
@@ -67,49 +68,61 @@ class ManipulateUsersCubit extends Cubit<ManipulateUsersState> {
   }
 
   resetSettings({required GlobalKey<FormState> formKey}) {
-
-    if(formKey == addUserScreenKey){
-    isUniqueNameGenerated = false;
-    uniqueName = "";
-    userNameController.text = "";
-    userPhoneController.text = "";
+    if (formKey == addUserScreenKey) {
+      isUniqueNameGenerated = false;
+      uniqueName = "";
+      userNameController.text = "";
+      userPhoneController.text = "";
+    } else {
+      userIdController.text = "";
     }
-    else {
-    userIdController.text = "";
-  }
   }
 
-  addNewUser({BuildContext? context}) {
+  Future<void> addNewUser({BuildContext? context}) async {
     if (checkRequestValidation(formKey: addUserScreenKey) &&
         isUniqueNameGenerated) {
-      firestoreService
+      await firestoreService
           .createUser(
             phoneNumber: userPhoneController.text,
             uniqueName: uniqueName,
           )
           .then((value) {});
-          resetSettings(formKey: addUserScreenKey);
+      resetSettings(formKey: addUserScreenKey);
+      fireEvent(AddNewUserEvent());
 
       ScaffoldMessenger.of(
         context!,
       ).showSnackBar(const SnackBar(content: Text('تمت إضافة العضو الجديد')));
 
-
       emit(AddNewUserSuccess(uniqueName: uniqueName));
     } else {
+      emit(AddNewUserFailure(uniqueName: uniqueName));
+
       ScaffoldMessenger.of(context!).showSnackBar(
         const SnackBar(content: Text('من فضلك، قم بإنشاء الاسم المميز')),
       );
     }
-    emit(AddNewUserFailure(uniqueName: uniqueName));
   }
-    /// ************** DELETE **********************
 
-    deleteUser({BuildContext? context, String? id}) {
-      late String userId;
-      if (id != null) {
-        userId = id;
+  /// ************** DELETE **********************
+
+  Future<void> deleteUser({BuildContext? context, String? id}) async {
+    late String userId;
+    if (id != null) {
+      userId = id;
+      await firestoreService.deleteUser(userId);
+      fireEvent(DeleteUserEvent());
+
+    //  showToastification(context: context!, message: "تم حذف العضو بنجاح");
+
+      emit(DeleteUserSuccess(userId: userId));
+    } else {
+      userId = userIdController.text;
+
+      if (checkRequestValidation(formKey: deleteUserScreenKey)) {
         firestoreService.deleteUser(userId);
+
+        resetSettings(formKey: deleteUserScreenKey);
 
         ScaffoldMessenger.of(
           context!,
@@ -117,42 +130,27 @@ class ManipulateUsersCubit extends Cubit<ManipulateUsersState> {
 
         emit(DeleteUserSuccess(userId: userId));
       } else {
-        userId = userIdController.text;
-
-        if (checkRequestValidation(formKey: deleteUserScreenKey)) {
-          firestoreService.deleteUser(userId);
-
-          resetSettings(formKey: deleteUserScreenKey);
-
-          ScaffoldMessenger.of(context!).showSnackBar(
-            const SnackBar(content: Text('تمت   حذف العضو بنجاح')),
-          );
-
-          emit(DeleteUserSuccess(userId: userId));
-        } else {
-          ScaffoldMessenger.of(context!).showSnackBar(
-            const SnackBar(
-              content: Text(" الخاص بهذا العضو ID  من فضلك أدخل ال "),
-            ),
-          );
-          emit(DeleteUserFailure(userId: userId));
-        }
+        ScaffoldMessenger.of(context!).showSnackBar(
+          const SnackBar(
+            content: Text(" الخاص بهذا العضو ID  من فضلك أدخل ال "),
+          ),
+        );
+        emit(DeleteUserFailure(userId: userId));
       }
     }
-
-    String? validatePaswdFormField({
-      required String? value,
-      required String? errorHint,
-    }) {
-      if (value == null || value.isEmpty) {
-        emit(ValidatePaswdFormFieldSuccess());
-
-        return errorHint!;
-      }
-      emit(ValidatePaswdFormFieldFailure());
-
-      return null;
-    }
-
-   
   }
+
+  String? validatePaswdFormField({
+    required String? value,
+    required String? errorHint,
+  }) {
+    if (value == null || value.isEmpty) {
+      emit(ValidatePaswdFormFieldSuccess());
+
+      return errorHint!;
+    }
+    emit(ValidatePaswdFormFieldFailure());
+
+    return null;
+  }
+}

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_scaffold.dart';
 import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
+import 'package:madunia_admin/features/manipulate_users/presentation/view_model/cubits/manipulate_users_cubit/manipulate_users_cubit.dart';
 import 'package:madunia_admin/features/user_details/presentation/view/widgets/user_details_profile_section.dart';
 import 'package:madunia_admin/features/user_details/presentation/view/widgets/user_other_details_cards_grid_view.dart';
 import 'package:madunia_admin/features/user_details/presentation/view/widgets/user_payment_details_cards_grid_view.dart';
@@ -13,8 +14,14 @@ class UserDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => UserDetailsCubit()..getTotalMoney(userId: user!.id),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              UserDetailsCubit()..getTotalMoney(userId: user!.id),
+        ),
+        // BlocProvider(create: (context) => ManipulateUsersCubit()),
+      ],
       child: CustomScaffold(
         body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -23,7 +30,9 @@ class UserDetailsScreen extends StatelessWidget {
               ..._drawHeader(),
               BlocBuilder<UserDetailsCubit, UserDetailsState>(
                 builder: (context, state) {
-                  return SliverList(delegate: SliverChildListDelegate(_drawBody(state)));
+                  return SliverList(
+                    delegate: SliverChildListDelegate(_drawBody(state)),
+                  );
                 },
               ),
             ],

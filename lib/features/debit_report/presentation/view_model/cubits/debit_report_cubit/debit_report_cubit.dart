@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -14,14 +13,11 @@ part 'debit_report_state.dart';
 class DebitReportCubit extends Cubit<DebitReportState> {
   DebitReportCubit() : super(DebitReportInitial());
 
-  final TextEditingController debitItemNameController = TextEditingController();
-  final TextEditingController debitItemValueController = TextEditingController();
-
-  final GlobalKey<FormState> addDebitItemScreenKey = GlobalKey<FormState>();
-
   FirestoreService firestoreService = FirestoreService();
 
-  getAllDebitItems({required String userId}) async {
+  ///******************************* GET ******************************************** */
+
+  Future getAllDebitItems({required String userId}) async {
     try {
       final allUserItemDebits = await firestoreService.getDebitItems(userId);
       emit(GetAllDebitItemsSuccess(allUserItemDebits: allUserItemDebits));
@@ -32,6 +28,8 @@ class DebitReportCubit extends Cubit<DebitReportState> {
       emit(GetAllDebitItemsFailure(errmesg: e.toString()));
     }
   }
+
+  ///****************************** Delete ******************************************** */
 
   Future<void> deleteDebitItem({
     required BuildContext context,
@@ -48,18 +46,29 @@ class DebitReportCubit extends Cubit<DebitReportState> {
     }
   }
 
-  sendAlarmToUser({required BuildContext context, required String debitItemId, required String userId}) {
+  ///************************************* HELPERS **************************************** */
+
+  sendAlarmToUser({
+    required BuildContext context,
+    required String debitItemId,
+    required String userId,
+  }) {
     showToastification(context: context, message: "تم إرسال تنبيه للدفع");
 
     // emit(SendAlarmToUserSuccess());
   }
 
+  ///************************************ VALIDATION **********************************
 
-  /// ******************************************************************************
-  ///
-  ///
+  final TextEditingController debitItemNameController = TextEditingController();
+  final TextEditingController debitItemValueController =
+      TextEditingController();
+  final GlobalKey<FormState> addDebitItemScreenKey = GlobalKey<FormState>();
 
-  String? validateTxtFormField({required String? value, required String? errorHint}) {
+  String? validateTxtFormField({
+    required String? value,
+    required String? errorHint,
+  }) {
     if (value == null || value.isEmpty) {
       emit(ValidateTxtFormFieldFailure());
 
@@ -78,7 +87,12 @@ class DebitReportCubit extends Cubit<DebitReportState> {
     }
   }
 
-  Future<void> addNewDebitItem({required BuildContext context, required AppUser user}) async {
+  /// ******************************** ADD **********************************************
+
+  Future<void> addNewDebitItem({
+    required BuildContext context,
+    required AppUser user,
+  }) async {
     if (checkRequestValidation()) {
       try {
         final debitItem = await firestoreService.addDebitItem(
@@ -93,9 +107,16 @@ class DebitReportCubit extends Cubit<DebitReportState> {
 
         eventBus.fire(UserDataUpdatedEvent(user.id));
 
-        showToastification(context: context, message: 'تمت إضافة العنصر إلى المديونية');
+        showToastification(
+          context: context,
+          message: 'تمت إضافة العنصر إلى المديونية',
+        );
       } catch (e) {
-        // Navigator.of(context).pop(false); // Return true to indicate success
+        emit(AddNewDebitItemFailure(errmesg: e.toString()));
+        showToastification(
+          context: context,
+          message: 'فشل في إضافة العنصر إلى المديونية',
+        );
       }
     }
   }

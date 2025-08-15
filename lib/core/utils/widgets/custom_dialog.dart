@@ -38,7 +38,7 @@ class CustomDialog {
                 ),
               ],
             ),
-
+          
             child: Padding(
               padding: EdgeInsets.all(20),
               child: Column(
@@ -54,8 +54,8 @@ class CustomDialog {
                     children: [
                       CustomTxt(
                         title: '''
-  سيتم حذفه بشكلِ كامل، 
-  ولن تستطيع استعادة بياناته''',
+            سيتم حذفه بشكلِ كامل، 
+            ولن تستطيع استعادة بياناته''',
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -63,13 +63,12 @@ class CustomDialog {
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () {
-                      context.read<ManipulateUsersCubit>().deleteUser(
+                    onPressed: () async {
+                      await context.read<ManipulateUsersCubit>().deleteUser(
                         context: context,
                         id: userId,
                       );
-      navigateToFirstRouteInStack(context: context);
-
+                        navigateToFirstRouteInStack(context: context);
                     },
                     child: CustomTxt(title: 'تأكيد'),
                   ),

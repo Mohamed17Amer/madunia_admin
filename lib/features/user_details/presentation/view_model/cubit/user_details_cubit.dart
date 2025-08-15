@@ -10,6 +10,7 @@ part 'user_details_state.dart';
 class UserDetailsCubit extends Cubit<UserDetailsState> {
   UserDetailsCubit() : super(UserDetailsInitial()) {
     eventBus.on<UserDataUpdatedEvent>().listen((event) => getTotalMoney(userId: event.userId));
+  
   }
 
   FirestoreService firestoreService = FirestoreService();

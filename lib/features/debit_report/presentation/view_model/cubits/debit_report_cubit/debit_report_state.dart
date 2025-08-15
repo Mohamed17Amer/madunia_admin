@@ -1,6 +1,7 @@
 part of 'debit_report_cubit.dart';
 
 @immutable
+///**************** INITIALS ************************ */
 abstract class DebitReportState extends Equatable {
   const DebitReportState();
 
@@ -12,9 +13,10 @@ final class DebitReportInitial extends DebitReportState {
   const DebitReportInitial();
 }
 
+///************************ GET *************************** */
 final class GetAllDebitItemsSuccess extends DebitReportState {
   final List<DebitItem> allUserItemDebits;
-   GetAllDebitItemsSuccess({required this.allUserItemDebits}) {
+  GetAllDebitItemsSuccess({required this.allUserItemDebits}) {
     debugPrint("debits$allUserItemDebits");
   }
 
@@ -30,6 +32,7 @@ final class GetAllDebitItemsFailure extends DebitReportState {
   List<Object?> get props => [errmesg];
 }
 
+///********************** DELETE ********************************* */
 final class DeleteDebitItemSuccess extends DebitReportState {
   final String debitItemId;
   const DeleteDebitItemSuccess({required this.debitItemId});
@@ -46,10 +49,7 @@ final class DeleteDebitItemFailure extends DebitReportState {
   List<Object?> get props => [errmesg];
 }
 
-
-
-///**************************************** */
-///
+///****************** VALIDATION ********************** */
 
 final class ValidateTxtFormFieldSuccess extends DebitReportState {
   const ValidateTxtFormFieldSuccess();
@@ -59,9 +59,11 @@ final class ValidateTxtFormFieldFailure extends DebitReportState {
   const ValidateTxtFormFieldFailure();
 }
 
+///****************** ADD ********************** */
+
 final class AddNewDebitItemSuccess extends DebitReportState {
   final dynamic debitItem; // type left dynamic because original was untyped
-   AddNewDebitItemSuccess({this.debitItem}) {
+  AddNewDebitItemSuccess({this.debitItem}) {
     log("new debit item added $debitItem");
   }
 
