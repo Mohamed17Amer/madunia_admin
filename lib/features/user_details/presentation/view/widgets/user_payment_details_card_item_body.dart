@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/services/firebase_sevices.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_icon.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
@@ -48,7 +49,7 @@ class UserPaymentDetailsCardItemBody extends StatelessWidget {
           child: CustomIcon(
             icon: Icons.copy_all,
             onPressed: () {
-              context.read<UserDetailsCubit>().copyTotalToClipboard("total");
+             copyToClipboard(text: "total");
             },
             color: Colors.black,
           ),

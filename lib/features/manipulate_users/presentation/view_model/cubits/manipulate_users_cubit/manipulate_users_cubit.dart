@@ -154,7 +154,5 @@ class ManipulateUsersCubit extends Cubit<ManipulateUsersState> {
       return null;
     }
 
-    navigateToFirstRouteInStack({required BuildContext context}) {
-      navigateToFirstRouteInStack(context: context);
-    }
+   
   }

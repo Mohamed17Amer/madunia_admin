@@ -49,7 +49,5 @@ class AppCubit extends Cubit<AppState> {
     emit(AppChangeBottomNavBarState(index));
   }
 
-  void navigateTo({required BuildContext context, required String path}) {
-    navigateToWithGoRouter(context: context, path: path);
-  }
+
 }

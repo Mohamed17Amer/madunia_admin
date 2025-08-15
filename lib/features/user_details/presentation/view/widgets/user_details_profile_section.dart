@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_circle_avatar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_dialog.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_icon.dart';
@@ -37,9 +38,7 @@ class UserDetailsProfileSection extends StatelessWidget {
               CustomIcon(
                 icon: Icons.copyright,
                 onPressed: () {
-                  context.read<UserDetailsCubit>().copyUserIdToClipboard(
-                    user?.id ?? "",
-                  );
+                  copyToClipboard(text: user?.id ?? "");
                 },
               ),
               const SizedBox(height: 5),
@@ -47,9 +46,7 @@ class UserDetailsProfileSection extends StatelessWidget {
               CustomIcon(
                 icon: Icons.file_copy,
                 onPressed: () {
-                  context.read<UserDetailsCubit>().copyUserNameToClipboard(
-                    user?.uniqueName ?? "",
-                  );
+                  copyToClipboard(text: user?.uniqueName ?? "");
                 },
               ),
               const SizedBox(height: 5),
@@ -57,9 +54,7 @@ class UserDetailsProfileSection extends StatelessWidget {
               CustomIcon(
                 icon: Icons.phone,
                 onPressed: () {
-                  context.read<UserDetailsCubit>().copyUserPhoneToClipboard(
-                    user?.phoneNumber ?? "",
-                  );
+                  copyToClipboard(text: user?.phoneNumber ?? "");
                 },
               ),
 

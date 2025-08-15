@@ -68,10 +68,8 @@ class CustomDialog {
                         context: context,
                         id: userId,
                       );
+      navigateToFirstRouteInStack(context: context);
 
-                      context
-                          .read<ManipulateUsersCubit>()
-                          .navigateToFirstRouteInStack(context: context);
                     },
                     child: CustomTxt(title: 'تأكيد'),
                   ),

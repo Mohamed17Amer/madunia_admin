@@ -2,8 +2,6 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
-import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/services/firebase_sevices.dart';
 import 'package:madunia_admin/core/utils/events/event_bus.dart';
 
@@ -29,28 +27,6 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
     return total;
   }
 
-  void copyUserNameToClipboard(String userUniqueName) {
-    copyToClipboard(text: userUniqueName);
-    // emit(CopyTotalToClipboardSuccess(total));
-  }
-
-  void copyUserIdToClipboard(String userId) {
-    copyToClipboard(text: userId);
-    // emit(CopyTotalToClipboardSuccess(total));
-  }
-
-  void copyTotalToClipboard(String total) {
-    copyToClipboard(text: total);
-    // emit(CopyTotalToClipboardSuccess(total));
-  }
-
-  void copyUserPhoneToClipboard(String userPhone) {
-    copyToClipboard(text: userPhone);
-  }
-
-  void navigateTo({required BuildContext context, required String path, required dynamic extra}) {
-    navigateToWithGoRouter(context: context, path: path, extra: extra);
-  }
 
   @override
   Future<void> close() {

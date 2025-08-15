@@ -54,9 +54,6 @@ class DebitReportCubit extends Cubit<DebitReportState> {
     // emit(SendAlarmToUserSuccess());
   }
 
-  navigateTo({required BuildContext context, required String path, dynamic extra}) {
-    navigateReplacementWithGoRouter(context: context, path: path, extra: extra);
-  }
 
   /// ******************************************************************************
   ///
