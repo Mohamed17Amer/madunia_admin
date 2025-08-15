@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/services/firebase_sevices.dart';
 import 'package:madunia_admin/core/utils/events/event_bus.dart';
-import 'package:madunia_admin/core/utils/router/app_screens.dart';
 import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/debit_report/data/models/debit_item_model.dart';
 
@@ -15,15 +14,13 @@ part 'debit_report_state.dart';
 class DebitReportCubit extends Cubit<DebitReportState> {
   DebitReportCubit() : super(DebitReportInitial());
 
-    final TextEditingController debitItemNameController = TextEditingController();
-  final TextEditingController debitItemValueController =
-      TextEditingController();
+  final TextEditingController debitItemNameController = TextEditingController();
+  final TextEditingController debitItemValueController = TextEditingController();
 
   final GlobalKey<FormState> addDebitItemScreenKey = GlobalKey<FormState>();
 
   FirestoreService firestoreService = FirestoreService();
 
- 
   getAllDebitItems({required String userId}) async {
     try {
       final allUserItemDebits = await firestoreService.getDebitItems(userId);
@@ -36,47 +33,36 @@ class DebitReportCubit extends Cubit<DebitReportState> {
     }
   }
 
-Future<void> deleteDebitItem({
-  required BuildContext context,
-  required String debitItemId,
-  required String userId,
-}) async {
-  try {
-    await firestoreService.deleteDebitItem(userId,debitItemId);
-    showToastification(context: context, message: "تم حذف العنصر");
-    emit(DeleteDebitItemSuccess(debitItemId: debitItemId));
-  } catch (e) {
-    showToastification(context: context, message: "لم يتم حذف العنصر");
-    emit(DeleteDebitItemFailure(errmesg: e.toString()));
-  }
-}
-  sendAlarmToUser({
+  Future<void> deleteDebitItem({
     required BuildContext context,
     required String debitItemId,
     required String userId,
-  }) {
+  }) async {
+    try {
+      await firestoreService.deleteDebitItem(userId, debitItemId);
+      showToastification(context: context, message: "تم حذف العنصر");
+      emit(DeleteDebitItemSuccess(debitItemId: debitItemId));
+    } catch (e) {
+      showToastification(context: context, message: "لم يتم حذف العنصر");
+      emit(DeleteDebitItemFailure(errmesg: e.toString()));
+    }
+  }
+
+  sendAlarmToUser({required BuildContext context, required String debitItemId, required String userId}) {
     showToastification(context: context, message: "تم إرسال تنبيه للدفع");
 
     // emit(SendAlarmToUserSuccess());
   }
 
-   navigateTo({
-    required BuildContext context,
-    required String path,
-    dynamic extra,
-  }) {
+  navigateTo({required BuildContext context, required String path, dynamic extra}) {
     navigateReplacementWithGoRouter(context: context, path: path, extra: extra);
   }
 
-
   /// ******************************************************************************
-  /// 
-  /// 
-  
-   String? validateTxtFormField({
-    required String? value,
-    required String? errorHint,
-  }) {
+  ///
+  ///
+
+  String? validateTxtFormField({required String? value, required String? errorHint}) {
     if (value == null || value.isEmpty) {
       emit(ValidateTxtFormFieldFailure());
 
@@ -95,10 +81,7 @@ Future<void> deleteDebitItem({
     }
   }
 
-  void addNewDebitItem({
-    required BuildContext context,
-    required AppUser user,
-  }) async {
+  Future<void> addNewDebitItem({required BuildContext context, required AppUser user}) async {
     if (checkRequestValidation()) {
       try {
         final debitItem = await firestoreService.addDebitItem(
@@ -113,22 +96,16 @@ Future<void> deleteDebitItem({
 
         eventBus.fire(UserDataUpdatedEvent(user.id));
 
-
-        showToastification(
-          context: context,
-          message: 'تمت إضافة العنصر إلى المديونية',
-        );
-
-        navigateReplacementWithGoRouter(
-          context: context,
-          path: AppScreens.debitScreen,
-          extra: user,
-        );
-        // Then navigate back
+        showToastification(context: context, message: 'تمت إضافة العنصر إلى المديونية');
       } catch (e) {
-        Navigator.of(context).pop(false); // Return true to indicate success
+        // Navigator.of(context).pop(false); // Return true to indicate success
       }
     }
   }
 
+  @override
+  Future<void> close() {
+    log('', error: 'Debit Report Cubit is Closed');
+    return super.close();
+  }
 }

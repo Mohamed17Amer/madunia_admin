@@ -1,14 +1,18 @@
 import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/services/firebase_sevices.dart';
+import 'package:madunia_admin/core/utils/events/event_bus.dart';
 
 part 'user_details_state.dart';
 
 class UserDetailsCubit extends Cubit<UserDetailsState> {
-  UserDetailsCubit() : super(UserDetailsInitial());
+  UserDetailsCubit() : super(UserDetailsInitial()) {
+    eventBus.on<UserDataUpdatedEvent>().listen((event) => getTotalMoney(userId: event.userId));
+  }
 
   FirestoreService firestoreService = FirestoreService();
 
@@ -21,7 +25,7 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
     total[0] = await firestoreService.getTotalDebitMoney(userId);
     total[1] = await firestoreService.getTotalOwnedMoney(userId);
     emit(GetTotalMoneySuccess(total: total));
-    log(total.toString());
+    log('Total Money is $total', name: 'getTotalMoney');
     return total;
   }
 
@@ -44,11 +48,13 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
     copyToClipboard(text: userPhone);
   }
 
-  void navigateTo({
-    required BuildContext context,
-    required String path,
-    required dynamic extra,
-  }) {
+  void navigateTo({required BuildContext context, required String path, required dynamic extra}) {
     navigateToWithGoRouter(context: context, path: path, extra: extra);
+  }
+
+  @override
+  Future<void> close() {
+    log('', error: 'User Details Cubit is Closed');
+    return super.close();
   }
 }

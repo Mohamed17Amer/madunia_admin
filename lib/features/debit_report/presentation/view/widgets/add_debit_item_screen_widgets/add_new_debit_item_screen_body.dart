@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:madunia_admin/core/utils/events/event_bus.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_app_bar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_buttom.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
@@ -37,17 +36,13 @@ class AddNewDebitItemScreenBody extends StatelessWidget {
                     errorHint: "الرجاء إدخال اسم البيان",
                   );
                 },
-                controller: context
-                    .read<DebitReportCubit>()
-                    .debitItemNameController,
+                controller: context.read<DebitReportCubit>().debitItemNameController,
               ),
             ),
             Expanded(
               flex: 1,
               child: CustomTxtFormField(
-                controller: context
-                    .read<DebitReportCubit>()
-                    .debitItemValueController,
+                controller: context.read<DebitReportCubit>().debitItemValueController,
                 labelText: "القيمة بالجنيه",
                 hintText: "الرجاء إدخال القيمة بالجنيه",
                 maxLines: 1,
@@ -56,7 +51,7 @@ class AddNewDebitItemScreenBody extends StatelessWidget {
                   FilteringTextInputFormatter.digitsOnly,
 
                   //    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                       LengthLimitingTextInputFormatter(4), // Max 4 digits
+                  LengthLimitingTextInputFormatter(4), // Max 4 digits
                 ],
 
                 validator: (value) {
@@ -70,16 +65,9 @@ class AddNewDebitItemScreenBody extends StatelessWidget {
             Expanded(
               flex: 1,
               child: CustomButtom(
-                child: const CustomTxt(
-                  title: "  إضافة العنصر",
-                  fontColor: Colors.white,
-                ),
-                onPressed: () {
-                  context.read<DebitReportCubit>().addNewDebitItem(
-                    context: context,
-                    user: user,
-                  );
-                  // eventBus.fire(UserDataUpdatedEvent(user.id));
+                child: const CustomTxt(title: "  إضافة العنصر", fontColor: Colors.white),
+                onPressed: () async {
+                  await context.read<DebitReportCubit>().addNewDebitItem(context: context, user: user);
                   Navigator.pop(context);
                 },
               ),

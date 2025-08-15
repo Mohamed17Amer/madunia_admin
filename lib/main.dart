@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ManipulateUsersCubit()),
 
         // BlocProvider(create: (context) => UserDetailsCubit()),
-        // BlocProvider(create: (context) => UserDetailsCubit()),
+        // BlocProvider(create: (context) => Us"cmake.sourceDirectory": "P:/my_flutter_projects/madunia_admin/windows/flutter"erDetailsCubit()),
       ],
       child: MaterialApp.router(
         routerConfig: AppRouter.router,

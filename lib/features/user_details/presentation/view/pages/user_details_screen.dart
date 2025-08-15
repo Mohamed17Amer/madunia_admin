@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:madunia_admin/core/utils/events/event_bus.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_scaffold.dart';
 import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/user_details/presentation/view/widgets/user_details_profile_section.dart';
@@ -9,31 +7,15 @@ import 'package:madunia_admin/features/user_details/presentation/view/widgets/us
 import 'package:madunia_admin/features/user_details/presentation/view/widgets/user_payment_details_cards_grid_view.dart';
 import 'package:madunia_admin/features/user_details/presentation/view_model/cubit/user_details_cubit.dart';
 
-class UserDetailsScreen extends StatefulWidget {
+class UserDetailsScreen extends StatelessWidget {
   final AppUser? user;
   const UserDetailsScreen({super.key, this.user});
 
   @override
-  State<UserDetailsScreen> createState() => _UserDetailsScreenState();
-}
-
-class _UserDetailsScreenState extends State<UserDetailsScreen> {
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    eventBus.on<UserDataUpdatedEvent>().listen((event) {
-      context.read<UserDetailsCubit>().getTotalMoney(userId: widget.user!.id);
-    });
-  }
-  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => UserDetailsCubit()..getTotalMoney(userId: widget.user!.id),
-      child:
-      CustomScaffold(
+      create: (context) => UserDetailsCubit()..getTotalMoney(userId: user!.id),
+      child: CustomScaffold(
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CustomScrollView(
@@ -41,11 +23,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
               ..._drawHeader(),
               BlocBuilder<UserDetailsCubit, UserDetailsState>(
                 builder: (context, state) {
-                  return SliverList(
-                    delegate: SliverChildListDelegate(
-                      _drawBody(state),
-                    ),
-                  );
+                  return SliverList(delegate: SliverChildListDelegate(_drawBody(state)));
                 },
               ),
             ],
@@ -58,9 +36,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   List<Widget> _drawHeader() {
     return <Widget>[
       SliverToBoxAdapter(child: SafeArea(child: SizedBox(height: 20))),
-      SliverToBoxAdapter(
-        child: UserDetailsProfileSection(user: widget.user),
-      ),
+      SliverToBoxAdapter(child: UserDetailsProfileSection(user: user)),
       SliverToBoxAdapter(child: SizedBox(height: 20)),
     ];
   }
@@ -68,17 +44,12 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   List<Widget> _drawBody(UserDetailsState state) {
     if (state is GetTotalMoneySuccess) {
       return [
-        UserPaymentDetailsCardsGridView(
-          user: widget.user,
-          totals: state.total,
-        ),
+        UserPaymentDetailsCardsGridView(user: user, totals: state.total),
         SizedBox(height: 5),
-        UserOtherDetailsCardsGridView(user: widget.user),
+        UserOtherDetailsCardsGridView(user: user),
       ];
     } else {
-      return [
-        const Center(child: CircularProgressIndicator()),
-      ];
+      return [const Center(child: CircularProgressIndicator())];
     }
   }
 }
