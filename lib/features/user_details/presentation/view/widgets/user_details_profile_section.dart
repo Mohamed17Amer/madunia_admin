@@ -70,7 +70,7 @@ class UserDetailsProfileSection extends StatelessWidget {
                 onPressed: () {
                   CustomDialog(context: context, userId: user!.id);
                   /*
-                  context.read<DeleteUserCubit>().deleteUser(
+                  context.read<ManipulateUsersCubit>().deleteUser(
                     context: context,
                     id: user!.id,
                   );

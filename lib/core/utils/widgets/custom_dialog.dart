@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
-import 'package:madunia_admin/features/manipulate_users/presentation/view_model/cubits/delete_user_cubit/delete_user_cubit.dart';
+import 'package:madunia_admin/features/manipulate_users/presentation/view_model/cubits/manipulate_users_cubit/manipulate_users_cubit.dart';
 
 class CustomDialog {
   final BuildContext context;
@@ -64,12 +64,12 @@ class CustomDialog {
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<DeleteUserCubit>().deleteUser(
+                      context.read<ManipulateUsersCubit>().deleteUser(
                         context: context,
                         id: userId,
                       );
 
-                      context.read<DeleteUserCubit>().navigateToFirstRouteInStack(
+                      context.read<ManipulateUsersCubit>().navigateToFirstRouteInStack(
                         context: context,
                         
                       );

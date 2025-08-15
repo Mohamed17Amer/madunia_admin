@@ -5,7 +5,7 @@ import 'package:madunia_admin/core/utils/widgets/custom_buttom.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_circle_avatar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt_form_field.dart';
-import 'package:madunia_admin/features/manipulate_users/presentation/view_model/cubits/delete_user_cubit/delete_user_cubit.dart';
+import 'package:madunia_admin/features/manipulate_users/presentation/view_model/cubits/manipulate_users_cubit/manipulate_users_cubit.dart';
 
 class DeleteUserBody extends StatelessWidget {
   const DeleteUserBody({super.key});
@@ -15,7 +15,7 @@ class DeleteUserBody extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Form(
-        key: context.read<DeleteUserCubit>().deleteUserScreenKey,
+        key: context.read<ManipulateUsersCubit>().deleteUserScreenKey,
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -39,12 +39,12 @@ class DeleteUserBody extends StatelessWidget {
                 hintText: "الرجاء إدخال كود العضو الموجود",
                 maxLines: 1,
                 validator: (value) {
-                  return context.read<DeleteUserCubit>().validateTxtFormField(
+                  return context.read<ManipulateUsersCubit>().validatePaswdFormField(
                     value: value,
                     errorHint: "الرجاء إدخال كود العضو الموجود",
                   );
                 },
-                controller: context.read<DeleteUserCubit>().userIdController,
+                controller: context.read<ManipulateUsersCubit>().userIdController,
               ),
               const SizedBox(height: 20),
 
@@ -58,11 +58,10 @@ class DeleteUserBody extends StatelessWidget {
                   fontColor: Colors.white,
                 ),
                 onPressed: () async {
-                  await context.read<DeleteUserCubit>().deleteUser(
+                  await context.read<ManipulateUsersCubit>().deleteUser(
                     context: context,
                   
                   );
-                  await context.read<DeleteUserCubit>().resetSettings();
                 },
               ),
 
