@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "787622730324",
+    "project_id": "mdunia-4de29",
+    "storage_bucket": "mdunia-4de29.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:787622730324:android:88ca53bffdbd1d3fc5ebc1",
+        "android_client_info": {
+          "package_name": "com.example.madunia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiCs8kS5lAZ4HMJzw_kwpFhnsYnX39ynw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:787622730324:android:3d04c157ab75d368c5ebc1",
+        "android_client_info": {
+          "package_name": "com.example.madunia_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiCs8kS5lAZ4HMJzw_kwpFhnsYnX39ynw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

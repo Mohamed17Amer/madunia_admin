@@ -1,3 +1,5 @@
 {
-  "dart.flutterSdkPath": ".fvm/versions/3.32.5"
+  "cmake.sourceDirectory": "P:/my_flutter_projects/madunia_admin/windows/flutter",
+  "dart.flutterSdkPath": ".fvm/versions/3.32.5",
+  
 }

@@ -1,16 +1,26 @@
 import 'dart:developer';
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/features/all_users/presentation/view/pages/all_users_screen.dart';
 import 'package:madunia_admin/features/app/presentation/view/widgets/custom_bottom_nav_bar_item.dart';
-import 'package:madunia_admin/features/debit_report/presentation/view/pages/debit_screen.dart';
 import 'package:madunia_admin/features/instructions/presentation/view/pages/annimated_instructions_screen.dart';
+import 'package:madunia_admin/features/manipulate_users/presentation/view/pages/manipulate_users_screen.dart';
 part 'app_state.dart';
 
 class AppCubit extends Cubit<AppState> {
   AppCubit() : super(AppInitial());
 
   static int currentIndex = 0;
+
+  static final List<Widget> pagesViews = [
+    AllUsersScreen(),
+    ManipulateUsersScreen(),
+    AllUsersScreen(),
+    AnimatedInstructionsScreen(),
+  ];
+
   static final List<CustomBottomNavBarItem> bottomNavBarItems = [
     CustomBottomNavBarItem(
       pageIcon: Icons.home_outlined,
@@ -34,15 +44,12 @@ class AppCubit extends Cubit<AppState> {
     ),
   ];
 
-  static final List<Widget> pagesViews = [
-    AllUsersScreen(),
-    DebitScreen(),
-    AllUsersScreen(),
-    AnimatedInstructionsScreen(),
-  ];
-
   void changeBottomNavBarIndex(int index) {
     currentIndex = index;
     emit(AppChangeBottomNavBarState(index));
+  }
+
+  void navigateTo({required BuildContext context, required String path}) {
+    navigateToWithGoRouter(context: context, path: path);
   }
 }

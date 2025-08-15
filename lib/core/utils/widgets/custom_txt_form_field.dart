@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:madunia_admin/core/utils/colors/app_colors.dart';
 
 class CustomTxtFormField extends StatelessWidget {
@@ -9,12 +10,18 @@ class CustomTxtFormField extends StatelessWidget {
   final String? hintText;
   final String? Function(String?)? validator;
   final int? maxLines;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+
 
   const CustomTxtFormField({
     super.key,
     required this.controller,
     required this.labelText,
     required this.validator,
+
+    this.keyboardType,
+    this.inputFormatters,
 
     this.hintText,
     this.maxLines = 1,
@@ -50,6 +57,8 @@ class CustomTxtFormField extends StatelessWidget {
       controller: controller,
       validator: validator,
       maxLines: maxLines,
+      keyboardType:keyboardType ,
+      inputFormatters: inputFormatters,
     );
   }
 }

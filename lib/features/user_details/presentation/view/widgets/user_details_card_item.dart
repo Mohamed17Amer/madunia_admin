@@ -1,54 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:madunia_admin/core/helper/helper_funcs.dart';
-import 'package:madunia_admin/core/utils/widgets/custom_icon.dart';
-import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
-import 'package:madunia_admin/features/user_details/presentation/view_model/cubit/user_details_cubit.dart';
+import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
+import 'package:madunia_admin/features/user_details/presentation/view/widgets/user_other_details_card_item_body.dart';
+import 'package:madunia_admin/features/user_details/presentation/view/widgets/user_payment_details_card_item_body.dart';
+import 'package:madunia_admin/features/user_details/presentation/view/widgets/user_details_card_item_container.dart';
 
 class UserDetailsCardItem extends StatelessWidget {
-  const UserDetailsCardItem({super.key});
+  final AppUser? user;
+  final int? index;
+  final String? flag;
+  final double? total;
+  const UserDetailsCardItem({
+    super.key,
+    this.user,
+    this.index,
+    required this.flag,  this.total,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      height: MediaQuery.of(context).size.height * 0.2,
-      width: MediaQuery.of(context).size.width * 0.45,
-      decoration: BoxDecoration(
-        color: generateRandomColor(),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: CustomTxt(title: "اسم البيان"),
-          ),
-
-          Align(
-            alignment: Alignment.topLeft,
-            child: CustomTxt(
-              title:
-                  " 15,000"
-                  " جنيه مصري ",
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 10),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: CustomIcon(
-              icon: Icons.copy_all,
-              onPressed: () {
-                context.read<UserDetailsCubit>().copyTotalToClipboard("total");
-              },
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
+    return UserDetailsCardItemContainer(
+      itemBody: (flag == "payment")
+          ? UserPaymentDetailsCardItemBody(user: user!, index: index!, total: total)
+          : UserOtherDetailsCardItemBody(user: user!, index: index!),
     );
   }
 }

@@ -1,11 +1,16 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:toastification/toastification.dart';
 
 // generate unique codes
 Set<String> existingCodes = {}; // Set to store existing codes
-String generateCode(int length, Set<String> existingCodes) {
+String generateCode({
+  required int length,
+  Set<String>? existingCodes,
+  String? name,
+}) {
   const characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   final random = Random();
@@ -16,7 +21,7 @@ String generateCode(int length, Set<String> existingCodes) {
       length,
       (_) => characters[random.nextInt(characters.length)],
     ).join();
-  } while (existingCodes.contains(code)); // ensure uniqueness
+  } while (existingCodes!.contains(code)); // ensure uniqueness
 
   existingCodes.add(code); // save for future checks
   return code;
@@ -45,14 +50,39 @@ showToastification({BuildContext? context, String? message}) {
   );
 }
 
-// copy
+// show snackbar messages
+showMessage(String message, BuildContext context) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+}
+
+// copy to clipboard
 copyToClipboard({String? text}) {
   Clipboard.setData(ClipboardData(text: text!));
 }
 
-// show snackbar messages
-void showMessage(String message, BuildContext context) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+/// ********************************************************** NAVIGATIONS *********************************************************
+
+void navigateToWithGoRouter({
+  required BuildContext context,
+  required String path,
+  dynamic extra,
+}) {
+  context.push(path, extra: extra);
+
+}
+
+void navigateReplacementWithGoRouter({
+  required BuildContext context,
+  required String path,
+  dynamic extra,
+}) {
+  context.pushReplacement(path, extra: extra);
+}
+
+void navigateToFirstRouteInStack({required BuildContext context}) {
+  Navigator.popUntil(context, (route) => route.isFirst);
+  // SystemNavigator.pop();
 }
 
 
+// context.read<UserDetailsCubit>().navigateTo( context: context,path: AppScreens.debitScreen, );

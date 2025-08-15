@@ -42,42 +42,6 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyCvT_RW6GmTbVocwiYJPBzfCFoGuOrOM2Q',
-    appId: '1:787622730324:web:9590ac753e74c033c5ebc1',
-    messagingSenderId: '787622730324',
-    projectId: 'mdunia-4de29',
-    authDomain: 'mdunia-4de29.firebaseapp.com',
-    storageBucket: 'mdunia-4de29.firebasestorage.app',
-    measurementId: 'G-LJ4B3YMN3T',
-  );
-
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAiCs8kS5lAZ4HMJzw_kwpFhnsYnX39ynw',
-    appId: '1:787622730324:android:88ca53bffdbd1d3fc5ebc1',
-    messagingSenderId: '787622730324',
-    projectId: 'mdunia-4de29',
-    storageBucket: 'mdunia-4de29.firebasestorage.app',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDWNDt_BvkTJzT-2nOSraSKnOoZ68AUduk',
-    appId: '1:787622730324:ios:63e6982cba9fc0bcc5ebc1',
-    messagingSenderId: '787622730324',
-    projectId: 'mdunia-4de29',
-    storageBucket: 'mdunia-4de29.firebasestorage.app',
-    iosBundleId: 'com.example.madunia_admin',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDWNDt_BvkTJzT-2nOSraSKnOoZ68AUduk',
-    appId: '1:787622730324:ios:63e6982cba9fc0bcc5ebc1',
-    messagingSenderId: '787622730324',
-    projectId: 'mdunia-4de29',
-    storageBucket: 'mdunia-4de29.firebasestorage.app',
-    iosBundleId: 'com.example.madunia_admin',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCvT_RW6GmTbVocwiYJPBzfCFoGuOrOM2Q',
     appId: '1:787622730324:web:7f9ec207fbac3ae4c5ebc1',
     messagingSenderId: '787622730324',
     projectId: 'mdunia-4de29',
@@ -85,4 +49,41 @@ class DefaultFirebaseOptions {
     storageBucket: 'mdunia-4de29.firebasestorage.app',
     measurementId: 'G-S1RHL2WED5',
   );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyAiCs8kS5lAZ4HMJzw_kwpFhnsYnX39ynw',
+    appId: '1:787622730324:android:3d04c157ab75d368c5ebc1',
+    messagingSenderId: '787622730324',
+    projectId: 'mdunia-4de29',
+    storageBucket: 'mdunia-4de29.firebasestorage.app',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDWNDt_BvkTJzT-2nOSraSKnOoZ68AUduk',
+    appId: '1:787622730324:ios:c23c3d328a48526dc5ebc1',
+    messagingSenderId: '787622730324',
+    projectId: 'mdunia-4de29',
+    storageBucket: 'mdunia-4de29.firebasestorage.app',
+    iosBundleId: 'com.example.maduniaAdmin',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDWNDt_BvkTJzT-2nOSraSKnOoZ68AUduk',
+    appId: '1:787622730324:ios:c23c3d328a48526dc5ebc1',
+    messagingSenderId: '787622730324',
+    projectId: 'mdunia-4de29',
+    storageBucket: 'mdunia-4de29.firebasestorage.app',
+    iosBundleId: 'com.example.maduniaAdmin',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCvT_RW6GmTbVocwiYJPBzfCFoGuOrOM2Q',
+    appId: '1:787622730324:web:dc8340cf2daf9c7fc5ebc1',
+    messagingSenderId: '787622730324',
+    projectId: 'mdunia-4de29',
+    authDomain: 'mdunia-4de29.firebaseapp.com',
+    storageBucket: 'mdunia-4de29.firebasestorage.app',
+    measurementId: 'G-21TR3HT8CC',
+  );
+
 }
