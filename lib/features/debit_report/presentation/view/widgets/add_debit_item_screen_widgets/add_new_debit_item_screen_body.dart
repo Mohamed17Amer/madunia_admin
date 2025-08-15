@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:madunia_admin/core/utils/events/event_bus.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_app_bar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_buttom.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
@@ -69,9 +70,10 @@ class AddNewDebitItemScreenBody extends StatelessWidget {
                 onPressed: () {
                   context.read<AddDebitItemCubit>().addNewDebitItem(
                     context: context,
-                    user: user
-                    
+                    user: user,
                   );
+                  eventBus.fire(UserDataUpdatedEvent(user.id));
+                  Navigator.pop(context);
                 },
               ),
             ),
