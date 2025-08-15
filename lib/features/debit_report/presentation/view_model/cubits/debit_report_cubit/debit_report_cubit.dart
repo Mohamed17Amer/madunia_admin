@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:madunia_admin/core/helper/helper_funcs.dart';
 import 'package:madunia_admin/core/services/firebase_sevices.dart';
+import 'package:madunia_admin/core/utils/events/event_bus.dart';
 import 'package:madunia_admin/core/utils/router/app_screens.dart';
 import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/debit_report/data/models/debit_item_model.dart';
@@ -109,6 +110,9 @@ Future<void> deleteDebitItem({
         );
 
         emit(AddNewDebitItemSuccess(debitItem: debitItem));
+
+        eventBus.fire(UserDataUpdatedEvent(user.id));
+
 
         showToastification(
           context: context,

@@ -18,33 +18,22 @@ class UserDetailsScreen extends StatefulWidget {
 }
 
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
-  StreamSubscription? _sub;
-  late final UserDetailsCubit _cubit; // ✅ store cubit reference
 
   @override
-  void dispose() {
-    // Cancel listener before widget tree is gone
-    _sub?.cancel();
-    super.dispose();
-  }
+  void initState() {
+    // TODO: implement initState
+    super.initState();
 
+    eventBus.on<UserDataUpdatedEvent>().listen((event) {
+      context.read<UserDetailsCubit>().getTotalMoney(userId: widget.user!.id);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) {
-        _cubit = UserDetailsCubit()
-          ..getTotalMoney(userId: widget.user!.id);
-
-        // Subscribe without using `context` inside the callback
-        _sub = eventBus.on<UserDataUpdatedEvent>().listen((event) {
-          if (event.userId == widget.user!.id) {
-            _cubit.getTotalMoney(userId: widget.user!.id);
-          }
-        });
-
-        return _cubit;
-      },
-      child: CustomScaffold(
+      create: (context) => UserDetailsCubit()..getTotalMoney(userId: widget.user!.id),
+      child:
+      CustomScaffold(
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CustomScrollView(
