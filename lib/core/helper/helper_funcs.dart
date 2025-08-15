@@ -67,7 +67,8 @@ void navigateToWithGoRouter({
   required String path,
   dynamic extra,
 }) {
-  GoRouter.of(context).push(path, extra: extra);
+  context.push(path, extra: extra);
+
 }
 
 void navigateReplacementWithGoRouter({
@@ -75,7 +76,7 @@ void navigateReplacementWithGoRouter({
   required String path,
   dynamic extra,
 }) {
-  GoRouter.of(context).pushReplacement(path, extra: extra);
+  context.pushReplacement(path, extra: extra);
 }
 
 void navigateToFirstRouteInStack({required BuildContext context}) {
