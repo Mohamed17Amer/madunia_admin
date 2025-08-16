@@ -18,63 +18,63 @@ class AddNewDebitItemScreenBody extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Form(
         key: context.read<DebitReportCubit>().addDebitItemScreenKey,
-        child: Column(
-          children: [
-            SafeArea(child: SizedBox(height: 5)),
-            CustomAppBar(title: "إضافة عنصر جديد للمديونية"),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SafeArea(child: SizedBox(height: 5)),
+              const CustomAppBar(title: "إضافة عنصر جديد للمديونية"),
 
-            SizedBox(height: 20),
-            Expanded(
-              flex: 1,
-              child: CustomTxtFormField(
+              const SizedBox(height: 20),
+              CustomTxtFormField(
                 labelText: "اسم البيان",
                 hintText: "الرجاء إدخال اسم البيان",
                 maxLines: 1,
                 validator: (value) {
                   return context.read<DebitReportCubit>().validateTxtFormField(
-                    value: value,
-                    errorHint: "الرجاء إدخال اسم البيان",
-                  );
+                        value: value,
+                        errorHint: "الرجاء إدخال اسم البيان",
+                      );
                 },
-                controller: context.read<DebitReportCubit>().debitItemNameController,
+                controller:
+                    context.read<DebitReportCubit>().debitItemNameController,
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: CustomTxtFormField(
-                controller: context.read<DebitReportCubit>().debitItemValueController,
+
+              const SizedBox(height: 20),
+              CustomTxtFormField(
+                controller:
+                    context.read<DebitReportCubit>().debitItemValueController,
                 labelText: "القيمة بالجنيه",
                 hintText: "الرجاء إدخال القيمة بالجنيه",
                 maxLines: 1,
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
-
-                  //    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                   LengthLimitingTextInputFormatter(4), // Max 4 digits
                 ],
-
                 validator: (value) {
                   return context.read<DebitReportCubit>().validateTxtFormField(
-                    value: value,
-                    errorHint: "الرجاء إدخال القيمة بالجنيه",
-                  );
+                        value: value,
+                        errorHint: "الرجاء إدخال القيمة بالجنيه",
+                      );
                 },
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: CustomButtom(
-                child: const CustomTxt(title: "  إضافة العنصر", fontColor: Colors.white),
+
+              const SizedBox(height: 30),
+              CustomButtom(
+                child: const CustomTxt(
+                    title: "إضافة العنصر", fontColor: Colors.white),
                 onPressed: () async {
-                  await context.read<DebitReportCubit>().addNewDebitItem(context: context, user: user);
+                  await context
+                      .read<DebitReportCubit>()
+                      .addNewDebitItem(context: context, user: user);
                   Navigator.pop(context);
                 },
               ),
-            ),
 
-            Expanded(flex: 4, child: SizedBox(height: 20)),
-          ],
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );

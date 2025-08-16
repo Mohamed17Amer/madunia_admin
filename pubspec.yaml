@@ -44,6 +44,7 @@ dependencies:
   firebase_auth: ^6.0.0
   equatable: ^2.0.7
   event_bus: ^2.0.1
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:
