@@ -23,12 +23,14 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
     final List<double> total = [0, 0];
     total[0] = await firestoreService.getTotalDebitMoney(userId);
     total[1] = await firestoreService.getTotalOwnedMoney(userId);
+    if (isClosed) return;
     emit(GetTotalMoneySuccess(total: total));
     log('Total Money is $total', name: 'getTotalMoney');
     return total;
   }
 
 
+ 
   @override
   Future<void> close() {
     log('', error: 'User Details Cubit is Closed');

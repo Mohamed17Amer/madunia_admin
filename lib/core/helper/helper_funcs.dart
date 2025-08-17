@@ -1,7 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:madunia_admin/core/utils/router/app_screens.dart';
+import 'package:madunia_admin/features/debit_report/presentation/view/pages/add_debit_item_screen.dart';
+import 'package:madunia_admin/features/owned_report/presentation/view/pages/add_owned_item_screen.dart';
+import 'package:madunia_admin/features/user_details/presentation/view_model/cubit/user_details_cubit.dart';
 import 'package:toastification/toastification.dart';
 
 // generate unique codes
@@ -67,8 +72,32 @@ void navigateToWithGoRouter({
   required String path,
   dynamic extra,
 }) {
-  context.push(path, extra: extra);
+  if (path == AppScreens.addNewDebitItemScreen) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BlocProvider.value(
+          value: BlocProvider.of<UserDetailsCubit>(context),
+          child: AddDebitItemScreen(user: extra),
+        ),
+      ),
+    );
+  }
+  else if (path == AppScreens.addNewOwnedItemScreen) {
+   Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BlocProvider.value(
+          value: BlocProvider.of<UserDetailsCubit>(context),
+          child: AddOwnedItemScreen(user: extra),
+        ),
+      ),
+    );
 
+  }
+   else {
+    context.push(path, extra: extra);
+  }
 }
 
 void navigateReplacementWithGoRouter({

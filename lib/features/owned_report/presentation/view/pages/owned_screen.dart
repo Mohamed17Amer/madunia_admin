@@ -8,23 +8,18 @@ import 'package:madunia_admin/features/user_details/presentation/view_model/cubi
 
 class OwnedScreen extends StatelessWidget {
   final AppUser user;
-  
-  const OwnedScreen({
-    super.key, 
-    required this.user,
-  });
+
+  const OwnedScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => OwnedReportCubit()..getAllOwnedItems(userId: user.id),
+          create: (context) =>
+              OwnedReportCubit()..getAllOwnedItems(userId: user.id),
         ),
-        BlocProvider(
-          create: (context) => UserDetailsCubit(),
-        ),
-         
+       // BlocProvider(create: (context) => UserDetailsCubit()),
       ],
       child: CustomScaffold(body: OwnedScreenBody(user: user)),
     );

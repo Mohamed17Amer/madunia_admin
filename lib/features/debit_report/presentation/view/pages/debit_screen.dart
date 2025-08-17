@@ -8,23 +8,18 @@ import 'package:madunia_admin/features/user_details/presentation/view_model/cubi
 
 class DebitScreen extends StatelessWidget {
   final AppUser user;
-  
-  const DebitScreen({
-    super.key, 
-    required this.user,
-  });
+
+  const DebitScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => DebitReportCubit()..getAllDebitItems(userId: user.id),
+          create: (context) =>
+              DebitReportCubit()..getAllDebitItems(userId: user.id),
         ),
-        BlocProvider(
-          create: (context) => UserDetailsCubit(),
-        ),
-         
+      //  BlocProvider(create: (context) => UserDetailsCubit()),
       ],
       child: CustomScaffold(body: DebitScreenBody(user: user)),
     );
