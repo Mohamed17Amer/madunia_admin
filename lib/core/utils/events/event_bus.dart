@@ -1,5 +1,4 @@
 import 'package:event_bus/event_bus.dart';
-import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 
 // Create a single EventBus instance accessible from anywhere
 final EventBus eventBus = EventBus();

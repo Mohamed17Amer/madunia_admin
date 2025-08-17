@@ -29,6 +29,14 @@ class UserPaymentDetailsCardsGridView extends StatelessWidget {
 
               );
             }
+            else if (index == 1) {
+               navigateToWithGoRouter(
+                context: context,
+                path: AppScreens.ownedScreen,
+                extra: user,
+
+              );
+            }
           },
 
           child: UserDetailsCardItem(

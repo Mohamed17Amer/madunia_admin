@@ -753,27 +753,38 @@ class FirestoreService {
 
   // ============ AUTOMATIC MONTHLY DEBIT FUNCTIONS ============
 
-  /// Add a monthly debit template that will be automatically added to all users every 1st of the month
+  /// Add a monthly debit template for specific user groups or all users
   Future<String> addMonthlyDebitTemplate({
     required String recordName,
     required double recordMoneyValue,
     required String status,
+    List<String>? userGroups, // ✅ NEW: Specify which user groups this applies to
+    List<String>? specificUserIds, // ✅ NEW: Or specify exact user IDs
+    bool applyToAllUsers = true, // ✅ NEW: Default behavior (all users)
     Map<String, dynamic>? additionalFields,
   }) async {
     try {
       _validateDebitItemInput(recordName, recordMoneyValue, status);
+
+      // Validate group assignment logic
+      if (!applyToAllUsers && (userGroups?.isEmpty ?? true) && (specificUserIds?.isEmpty ?? true)) {
+        throw ArgumentError('Must specify userGroups, specificUserIds, or set applyToAllUsers to true');
+      }
 
       final templateData = {
         'recordName': recordName.trim(),
         'recordMoneyValue': recordMoneyValue,
         'status': status.trim().toLowerCase(),
         'isActive': true,
+        'applyToAllUsers': applyToAllUsers,
+        'userGroups': userGroups ?? [], // Groups this template applies to
+        'specificUserIds': specificUserIds ?? [], // Specific users this applies to
         'createdAt': FieldValue.serverTimestamp(),
         if (additionalFields != null) 'additionalFields': additionalFields,
       };
 
       final docRef = await _monthlyDebitsRef.add(templateData);
-      log('Added monthly debit template with ID: ${docRef.id}');
+      log('Added monthly debit template with ID: ${docRef.id} for ${applyToAllUsers ? "all users" : "specific groups/users"}');
       return docRef.id;
     } catch (e) {
       throw FirebaseFailure.fromException(
@@ -813,6 +824,7 @@ class FirestoreService {
   }
 
   /// Execute monthly debits for all users (call this on the 1st of every month)
+  /// Now supports user groups and specific user targeting
   Future<void> executeMonthlyDebits() async {
     try {
       final now = DateTime.now();
@@ -839,34 +851,55 @@ class FirestoreService {
       }
 
       // Get all users
-      final users = await getAllUsers();
-      if (users.isEmpty) {
+      final allUsers = await getAllUsers();
+      if (allUsers.isEmpty) {
         log('No users found for monthly debit execution');
         return;
       }
 
       int totalItemsAdded = 0;
+      int totalUsersProcessed = 0;
+      Map<String, int> templateStats = {}; // Track items per template
       
-      // Add debit items for each user based on templates
-      for (final user in users) {
-        for (final template in templates) {
-          try {
-            await addDebitItem(
-              userId: user.id,
-              recordName: '${template.recordName} - ${_getMonthYearString(now)}',
-              recordMoneyValue: template.recordMoneyValue,
-              status: template.status,
-              additionalFields: {
-                'isMonthlyDebit': true,
-                'monthYear': '${now.year}-${now.month.toString().padLeft(2, '0')}',
-                'templateId': template.id,
-                ...?template.additionalFields,
-              },
-            );
-            totalItemsAdded++;
-          } catch (e) {
-            log('Error adding monthly debit for user ${user.id}, template ${template.id}: $e');
+      // Process each template
+      for (final template in templates) {
+        try {
+          // Determine which users this template applies to
+          final targetUsers = _getTargetUsersForTemplate(template, allUsers);
+          
+          if (targetUsers.isEmpty) {
+            log('No target users found for template: ${template.id}');
+            continue;
           }
+
+          // Add debit items for target users
+          for (final user in targetUsers) {
+            try {
+              await addDebitItem(
+                userId: user.id,
+                recordName: '${template.recordName} - ${_getMonthYearString(now)}',
+                recordMoneyValue: template.recordMoneyValue,
+                status: template.status,
+                additionalFields: {
+                  'isMonthlyDebit': true,
+                  'monthYear': '${now.year}-${now.month.toString().padLeft(2, '0')}',
+                  'templateId': template.id,
+                  'userGroups': template.userGroups,
+                  ...?template.additionalFields,
+                },
+              );
+              totalItemsAdded++;
+              templateStats[template.id] = (templateStats[template.id] ?? 0) + 1;
+            } catch (e) {
+              log('Error adding monthly debit for user ${user.id}, template ${template.id}: $e');
+            }
+          }
+          
+          totalUsersProcessed += targetUsers.length;
+          log('Applied template "${template.recordName}" to ${targetUsers.length} users');
+          
+        } catch (e) {
+          log('Error processing template ${template.id}: $e');
         }
       }
 
@@ -876,16 +909,118 @@ class FirestoreService {
         'lastExecutionDetails': {
           'year': now.year,
           'month': now.month,
-          'totalUsersProcessed': users.length,
+          'totalUsersInSystem': allUsers.length,
+          'totalUsersProcessed': totalUsersProcessed,
           'totalTemplatesProcessed': templates.length,
           'totalItemsAdded': totalItemsAdded,
+          'templateStats': templateStats, // How many items per template
         },
       });
 
-      log('Monthly debits executed successfully: $totalItemsAdded items added for ${users.length} users');
+      log('Monthly debits executed successfully: $totalItemsAdded items added for $totalUsersProcessed user-template combinations');
     } catch (e) {
       throw FirebaseFailure.fromException(
         Exception('Failed to execute monthly debits: $e'),
+      );
+    }
+  }
+
+  /// Helper method to determine which users a template applies to
+  List<AppUser> _getTargetUsersForTemplate(MonthlyDebitTemplate template, List<AppUser> allUsers) {
+    // If applies to all users, return all users
+    if (template.applyToAllUsers) {
+      return allUsers;
+    }
+
+    List<AppUser> targetUsers = [];
+
+    // Add users by specific IDs
+    if (template.specificUserIds.isNotEmpty) {
+      for (final userId in template.specificUserIds) {
+        try {
+          final user = allUsers.firstWhere((u) => u.id == userId);
+          if (!targetUsers.contains(user)) {
+            targetUsers.add(user);
+          }
+        } catch (e) {
+          log('Warning: User ID $userId not found in system');
+        }
+      }
+    }
+
+    // Add users by groups
+    if (template.userGroups.isNotEmpty) {
+      for (final user in allUsers) {
+        // Check if user belongs to any of the required groups
+        final userGroups = _getUserGroups(user);
+        for (final requiredGroup in template.userGroups) {
+          if (userGroups.contains(requiredGroup) && !targetUsers.contains(user)) {
+            targetUsers.add(user);
+            break; // User is already added, no need to check other groups
+          }
+        }
+      }
+    }
+
+    return targetUsers;
+  }
+
+  /// Get user groups for a specific user
+  /// You can implement this based on your business logic
+  List<String> _getUserGroups(AppUser user) {
+    // EXAMPLE IMPLEMENTATIONS - Choose one or create your own:
+    
+    // Option 1: Based on user ID hash (distributes users evenly)
+    final userIdHash = user.id.hashCode.abs();
+    final groupNumber = (userIdHash % 5) + 1; // Creates groups 1-5
+    return ['group_$groupNumber'];
+
+    // Option 2: Based on phone number last digit
+    // final lastDigit = int.tryParse(user.phoneNumber.substring(user.phoneNumber.length - 1)) ?? 0;
+    // final groupNumber = (lastDigit % 5) + 1;
+    // return ['group_$groupNumber'];
+
+    // Option 3: Based on user name first letter
+    // final firstLetter = user.uniqueName.toLowerCase().substring(0, 1);
+    // if (['a', 'b', 'c', 'd', 'e'].contains(firstLetter)) return ['group_1'];
+    // if (['f', 'g', 'h', 'i', 'j'].contains(firstLetter)) return ['group_2'];
+    // if (['k', 'l', 'm', 'n', 'o'].contains(firstLetter)) return ['group_3'];
+    // if (['p', 'q', 'r', 's', 't'].contains(firstLetter)) return ['group_4'];
+    // return ['group_5'];
+
+    // Option 4: Store groups in user metadata (requires updating AppUser model)
+    // return user.groups ?? ['default_group'];
+  }
+
+  /// Get users by group
+  Future<List<AppUser>> getUsersByGroup(String groupName) async {
+    try {
+      final allUsers = await getAllUsers();
+      return allUsers.where((user) => _getUserGroups(user).contains(groupName)).toList();
+    } catch (e) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to get users by group: $e'),
+      );
+    }
+  }
+
+  /// Get all user groups and their user counts
+  Future<Map<String, int>> getAllUserGroupStats() async {
+    try {
+      final allUsers = await getAllUsers();
+      final Map<String, int> groupStats = {};
+
+      for (final user in allUsers) {
+        final userGroups = _getUserGroups(user);
+        for (final group in userGroups) {
+          groupStats[group] = (groupStats[group] ?? 0) + 1;
+        }
+      }
+
+      return groupStats;
+    } catch (e) {
+      throw FirebaseFailure.fromException(
+        Exception('Failed to get user group stats: $e'),
       );
     }
   }
@@ -1487,13 +1622,16 @@ class UserStatistics {
   }
 }
 
-/// Data class for monthly debit templates
+/// Enhanced data class for monthly debit templates with user group support
 class MonthlyDebitTemplate {
   final String id;
   final String recordName;
   final double recordMoneyValue;
   final String status;
   final bool isActive;
+  final bool applyToAllUsers; // ✅ NEW: Whether this applies to all users
+  final List<String> userGroups; // ✅ NEW: Which user groups this applies to
+  final List<String> specificUserIds; // ✅ NEW: Specific user IDs this applies to
   final DateTime? createdAt;
   final Map<String, dynamic>? additionalFields;
 
@@ -1503,6 +1641,9 @@ class MonthlyDebitTemplate {
     required this.recordMoneyValue,
     required this.status,
     required this.isActive,
+    this.applyToAllUsers = true,
+    this.userGroups = const [],
+    this.specificUserIds = const [],
     this.createdAt,
     this.additionalFields,
   });
@@ -1514,6 +1655,9 @@ class MonthlyDebitTemplate {
       recordMoneyValue: (map['recordMoneyValue'] ?? 0.0).toDouble(),
       status: map['status'] ?? '',
       isActive: map['isActive'] ?? true,
+      applyToAllUsers: map['applyToAllUsers'] ?? true,
+      userGroups: List<String>.from(map['userGroups'] ?? []),
+      specificUserIds: List<String>.from(map['specificUserIds'] ?? []),
       createdAt: map['createdAt'] != null ? (map['createdAt'] as Timestamp).toDate() : null,
       additionalFields: map['additionalFields'] as Map<String, dynamic>?,
     );
@@ -1525,9 +1669,27 @@ class MonthlyDebitTemplate {
       'recordMoneyValue': recordMoneyValue,
       'status': status,
       'isActive': isActive,
+      'applyToAllUsers': applyToAllUsers,
+      'userGroups': userGroups,
+      'specificUserIds': specificUserIds,
       'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : FieldValue.serverTimestamp(),
       if (additionalFields != null) 'additionalFields': additionalFields,
     };
   }
-}
 
+  /// Get target description for this template
+  String get targetDescription {
+    if (applyToAllUsers) return 'All Users';
+    if (specificUserIds.isNotEmpty && userGroups.isNotEmpty) {
+      return 'Groups: ${userGroups.join(', ')} + ${specificUserIds.length} specific users';
+    }
+    if (specificUserIds.isNotEmpty) return '${specificUserIds.length} specific users';
+    if (userGroups.isNotEmpty) return 'Groups: ${userGroups.join(', ')}';
+    return 'No targets defined';
+  }
+
+  @override
+  String toString() {
+    return 'MonthlyDebitTemplate(id: $id, recordName: $recordName, target: $targetDescription)';
+  }
+}

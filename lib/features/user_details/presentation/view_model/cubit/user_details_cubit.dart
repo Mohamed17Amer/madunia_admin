@@ -17,7 +17,7 @@ class UserDetailsCubit extends Cubit<UserDetailsState> {
 
   final userPaymentDetailsCategoriess = ["عليه", "له"];
 
-  final userOtherDrtailsCategoriess = ["البلاغات"];
+  final userOtherDrtailsCategoriess = [" البلاغات والطلبات"];
 
   getTotalMoney({required String userId}) async {
     final List<double> total = [0, 0];

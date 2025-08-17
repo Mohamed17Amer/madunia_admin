@@ -44,7 +44,7 @@ class OwnedScreenBody extends StatelessWidget {
 
       // app bar
       SliverToBoxAdapter(
-        child: CustomAppBar(title: "كشف المديونية المستحقة عليه"),
+        child: CustomAppBar(title: "كشف المديونية المستحقة له"),
       ),
       SliverToBoxAdapter(child: SizedBox(height: 20)),
 
