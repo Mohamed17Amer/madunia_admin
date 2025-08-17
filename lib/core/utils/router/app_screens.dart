@@ -7,7 +7,9 @@ class AppScreens {
 
   static const String userDetailsScreen = "/user_details";
   static const String debitScreen = '/debit';
+  static const String ownedScreen = '/owned';
   static const String addNewDebitItemScreen = "/add_new_debit_item";
+  static const String addNewOwnedItemScreen = "/add_new_owned_item";
 
   static const String addNewUserScreen = "/add_new_user";
   static const String deleteUserScreen = "/delete_user";
