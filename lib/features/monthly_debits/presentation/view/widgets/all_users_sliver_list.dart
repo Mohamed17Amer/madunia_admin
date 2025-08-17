@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/utils/colors/app_colors.dart';
-import 'package:madunia_admin/features/all_users/presentation/view/widgets/users_sliver_list_item.dart';
 import 'package:madunia_admin/features/all_users/presentation/view_model/cubit/all_users_cubit.dart';
 import 'package:madunia_admin/features/all_users/data/models/app_user_model.dart';
 import 'package:madunia_admin/features/monthly_debits/presentation/view/widgets/users_sliver_list_item.dart';

@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_app_bar.dart';
 import 'package:madunia_admin/core/utils/widgets/custom_txt.dart';
-import 'package:madunia_admin/features/all_users/presentation/view/widgets/all_users_sliver_list.dart';
 import 'package:madunia_admin/features/all_users/presentation/view_model/cubit/all_users_cubit.dart';
 import 'package:madunia_admin/features/monthly_debits/presentation/view/widgets/all_users_sliver_list.dart';
 
-class MonthlyDebitsScreen extends StatelessWidget {
-  const MonthlyDebitsScreen({super.key});
+class AllUsersForMonthlyTransactionsScreen extends StatelessWidget {
+  const AllUsersForMonthlyTransactionsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

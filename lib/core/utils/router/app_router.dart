@@ -8,6 +8,7 @@ import 'package:madunia_admin/features/debit_report/presentation/view/pages/debi
 import 'package:madunia_admin/features/manipulate_users/presentation/view/pages/add_new_user_screen.dart';
 import 'package:madunia_admin/features/manipulate_users/presentation/view/pages/delete_user_screen.dart';
 import 'package:madunia_admin/features/manipulate_users/presentation/view/pages/manipulate_users_screen.dart';
+import 'package:madunia_admin/features/monthly_debits/presentation/view/pages/all_users_screen.dart';
 import 'package:madunia_admin/features/owned_report/presentation/view/pages/add_owned_item_screen.dart';
 import 'package:madunia_admin/features/owned_report/presentation/view/pages/owned_screen.dart';
 import 'package:madunia_admin/features/user_details/presentation/view/pages/user_details_screen.dart';
@@ -115,7 +116,7 @@ abstract class AppRouter {
         },
       ),
 
-         // add new debit item
+         // add new owned item
       GoRoute(
         path: AppScreens.addNewOwnedItemScreen,
         builder: (context, state) {
@@ -125,7 +126,13 @@ abstract class AppRouter {
       ),
 
 
-  
+     // all users screen
+      GoRoute(
+        path: AppScreens.allUsersFormonthlyTransactionsScreen,
+        builder: (context, state) {
+          return AllUsersForMonthlyTransactionsScreen();
+        },
+      ),
   
   
   

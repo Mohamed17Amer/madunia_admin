@@ -2,6 +2,7 @@ class AppScreens {
   static const String startingScreen = '/';
 
   static const String allUsersScreen = "/all_users";
+  static const String allUsersFormonthlyTransactionsScreen = "/all_users_for_monthly_transactions";
   static const String manipulateUsersScreen = "/manipulate_users";
   static const String animatedInstructionsScreen = '/instructions';
 
