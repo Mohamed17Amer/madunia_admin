@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:madunia_admin/core/utils/colors/app_colors.dart';
 
 class CustomScaffold extends StatelessWidget {
-  Widget? body;
-  CustomScaffold({super.key, this.body});
+  Widget body;
+  Widget? floatingActionButton;
+  CustomScaffold({super.key, required this.body, this.floatingActionButton});
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +24,8 @@ class CustomScaffold extends StatelessWidget {
 
           child: body,
         ),
+
+        floatingActionButton:floatingActionButton ,
       ),
     );
   }
